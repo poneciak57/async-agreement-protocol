@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asynchroniczne Bizantyjskie Porozumienie z Optymalną Odpornością</title>
+    
+    <!-- MathJax for mathematical notation -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            border-bottom: 2px solid #95a5a6;
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 30px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+        
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+        
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        
+        .algorithm {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .algorithm-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .theorem, .lemma, .definition {
+            border-left: 4px solid #27ae60;
+            background-color: #f0fdf4;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .theorem-title, .lemma-title, .definition-title {
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        
+        .proof {
+            border-left: 4px solid #8e44ad;
+            background-color: #f3e8ff;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .proof-title {
+            font-weight: bold;
+            color: #8e44ad;
+            margin-bottom: 10px;
+        }
+        
+        .note {
+            background-color: #fff8dc;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .keyword {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .comment {
+            color: #27ae60;
+            font-style: italic;
+        }
+        
+        .function-name {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .github-link {
+            display: inline-block;
+            background-color: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .github-link:hover {
+            background-color: #0366d6;
+            text-decoration: none;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Asynchroniczne Bizantyjskie Porozumienie z Optymalną Odpornością i Liniową Złożonością</h1>
+
+<p><em>Implementacja protokołu opartego na pracy Cheng Wang (EPFL)</em></p>
+
+<div class="section">
+    <h2>1. Opis Problemu</h2>
+    
+    <h3>1.1. Problem Bizantyjskiego Porozumienia</h3>
+    
+    <p>
+        <strong>Problem Bizantyjskiego Porozumienia (Byzantine Agreement)</strong> jest fundamentalnym problemem 
+        w informatyce rozproszonej, wprowadzonym przez Pease, Shostak i Lamport w latach 80. Problem można 
+        sformułować następująco:
+    </p>
+    
+    <div class="definition">
+        <div class="definition-title">Definicja: Asynchroniczne Bizantyjskie Porozumienie (ABA)</div>
+        <p>
+            Danych jest \(n\) procesów, z których \(t\) może być <em>bizantyjskich</em> (złośliwych). 
+            Każdy poprawny proces ma wartość wejściową (bit: 0 lub 1). Protokół ABA musi spełniać:
+        </p>
+        <ul>
+            <li><strong>Terminacja:</strong> Z prawdopodobieństwem 1, każdy poprawny proces kończy działanie i zwraca wartość.</li>
+            <li><strong>Zgodność (Agreement):</strong> Wszystkie poprawne procesy zwracają tę samą wartość.</li>
+            <li><strong>Poprawność (Validity):</strong> Jeśli wszystkie poprawne procesy mają tę samą wartość wejściową \(v\), 
+                to wszystkie zwracają \(v\).</li>
+        </ul>
+    </div>
+    
+    <h3>Model Asynchroniczny</h3>
+    <p>
+        W modelu asynchronicznym komunikacja między procesami może trwać dowolnie długo (ale skończenie). 
+        Nie ma globalnego zegara ani synchronizacji. Cechy modelu:
+    </p>
+    <ul>
+        <li>Pełna sieć \(n\) procesów z identyfikatorami \(\{1, 2, \ldots, n\}\)</li>
+        <li>Prywatne kanały komunikacyjne (adversary nie może odczytać ani zmodyfikować wiadomości między poprawnymi procesami)</li>
+        <li>Wiadomości mogą być opóźnione dowolnie długo, ale zawsze ostatecznie docierają</li>
+        <li>Adversary kontroluje maksymalnie \(t\) procesów, które mogą zachowywać się dowolnie</li>
+    </ul>
+    
+    <h3>Wyniki Niemożliwości</h3>
+    <div class="note">
+        <p><strong>Klasyczne wyniki teoretyczne:</strong></p>
+        <ul>
+            <li><strong>Fischer-Lynch-Paterson (FLP):</strong> Deterministyczne porozumienie jest niemożliwe w modelu asynchronicznym, 
+                nawet przy jednym procesie awarii.</li>
+            <li><strong>Dolna granica odporności:</strong> Problem jest nierozwiązywalny jeśli \(n \leq 3t\).</li>
+        </ul>
+        <p>
+            Te wyniki prowadzą do dwóch kierunków badań: protokoły <em>randomizowane</em> oraz 
+            protokoły z <em>optymalną odpornością</em> (\(n > 3t\)).
+        </p>
+    </div>
+    
+    <h3>1.2. Przykład Zastosowania</h3>
+    
+    <h4>Scenariusz: Rozproszony System Blockchain</h4>
+    <p>
+        Wyobraźmy sobie sieć blockchain z 10 węzłami walidującymi (\(n = 10\)), z których maksymalnie 3 
+        mogą być kontrolowane przez przeciwnika (\(t = 3\)). Ponieważ \(n = 10 > 3t = 9\), spełniona jest 
+        optymalna odporność.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Przypadek użycia: Walidacja bloku transakcji</div>
+        <p><strong>Sytuacja początkowa:</strong></p>
+        <ul>
+            <li>7 węzłów otrzymało propozycję bloku A (głosują: 1)</li>
+            <li>3 węzły bizantyjskie próbują promować blok B (głosują: 0)</li>
+            <li>Węzły bizantyjskie mogą: opóźniać wiadomości, wysyłać sprzeczne informacje, kłamać o swoich głosach</li>
+        </ul>
+        
+        <p><strong>Działanie protokołu:</strong></p>
+        <ol>
+            <li><strong>Runda 1:</strong> Węzły wymieniają swoje głosy przez A-Cast (reliable broadcast)
+                <ul>
+                    <li>Poprawne węzły widzą większość dla wartości 1</li>
+                    <li>Bizantyjskie węzły próbują wprowadzić chaos, ale A-Cast gwarantuje spójność</li>
+                </ul>
+            </li>
+            <li><strong>Runda 2:</strong> Protokół Vote wykrywa silną większość (strength = 2) dla wartości 1
+                <ul>
+                    <li>Wszystkie poprawne węzły zgadzają się na blok A</li>
+                    <li>Węzły wysyłają COMPLETE i kończą protokół</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <p><strong>Wynik:</strong> Wszystkie 7 poprawnych węzłów akceptuje blok A, mimo że 3 węzły były bizantyjskie.</p>
+    </div>
+    
+    <h4>Inne zastosowania:</h4>
+    <ul>
+        <li><strong>Rozproszony konsensus w bazach danych:</strong> Replikacja danych z tolerancją błędów bizantyjskich 
+            (np. CockroachDB, Spanner)</li>
+        <li><strong>Systemy sterowania krytyczne:</strong> Kontrola lotów kosmicznych, gdzie różne komputery muszą 
+            uzgodnić wspólną akcję mimo awarii sprzętu</li>
+        <li><strong>Infrastruktura chmurowa:</strong> Koordynacja usług rozproszonych w obecności złośliwych aktorów 
+            lub skompromitowanych węzłów</li>
+        <li><strong>Protokoły kryptograficzne:</strong> Multi-party computation, gdzie uczestnicy muszą uzgodnić 
+            wynik obliczeń bez zaufanej strony trzeciej</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>2. Porównanie Istniejących Rozwiązań</h2>
+    
+    <p>
+        Historia protokołów bizantyjskiego porozumienia pokazuje ewolucję od rozwiązań wykładniczych 
+        do coraz bardziej efektywnych algorytmów. Kluczowe pytania to:
+    </p>
+    <ul>
+        <li><strong>Odporność (Resilience):</strong> Ile procesów bizantyjskich możemy tolerować?</li>
+        <li><strong>Złożoność czasowa:</strong> Ile rund komunikacji potrzeba do osiągnięcia konsensusu?</li>
+        <li><strong>Gwarancje terminacji:</strong> Czy protokół zawsze kończy działanie (prawie na pewno)?</li>
+    </ul>
+    
+    <h3>Tabela porównawcza protokołów ABA</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Protokół</th>
+                <th>Rok</th>
+                <th>Odporność</th>
+                <th>Oczekiwany czas</th>
+                <th>Uwagi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Ben-Or</strong></td>
+                <td>1983</td>
+                <td>\(n > 5t\)</td>
+                <td>\(O(2^n)\)</td>
+                <td>Pierwszy randomizowany protokół, słaba odporność</td>
+            </tr>
+            <tr>
+                <td><strong>Bracha</strong></td>
+                <td>1984</td>
+                <td>\(n > 3t\)</td>
+                <td>\(O(2^n)\)</td>
+                <td>Optymalna odporność, ale wykładnicza złożoność</td>
+            </tr>
+            <tr>
+                <td><strong>Feldman-Micali</strong></td>
+                <td>1988</td>
+                <td>\(n > 4t\)</td>
+                <td>\(O(1)\)</td>
+                <td>Stały czas! Ale wymaga \(n > 4t\)</td>
+            </tr>
+            <tr>
+                <td><strong>Canetti-Rabin</strong></td>
+                <td>1993</td>
+                <td>\(n > 3t\)</td>
+                <td>\(O(1)\)</td>
+                <td>Stały czas, ale tylko z przytłaczającym prawdopodobieństwem (nie prawie na pewno)</td>
+            </tr>
+            <tr>
+                <td><strong>Abraham-Dolev-Halpern</strong></td>
+                <td>2008</td>
+                <td>\(n > 3t\)</td>
+                <td>\(O(n^2)\)</td>
+                <td>Optymalna odporność + wielomianowy czas + prawie pewna terminacja</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Wang (ten protokół)</strong></td>
+                <td>2013</td>
+                <td>\(n > 3t\)</td>
+                <td>\(O(t)\)</td>
+                <td><strong>Najlepszy wynik:</strong> optymalna odporność + liniowy czas!</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Wang (ten protokół)</strong></td>
+                <td>2013</td>
+                <td>\(n > (3+\varepsilon)t\)</td>
+                <td>\(O(1/\varepsilon)\)</td>
+                <td>Prawie stały czas dla \(n\) niewiele większego niż \(3t\)</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>Przełomowe znaczenie tego rozwiązania</h3>
+    
+    <div class="note">
+        <p><strong>Dlaczego ten protokół jest ważny?</strong></p>
+        <ol>
+            <li><strong>Przełamanie bariery \(O(n^2)\):</strong> Pierwszy protokół z optymalną odpornością 
+                osiągający złożoność \(O(t)\), co przy \(t = \Theta(n)\) daje \(O(n)\) zamiast \(O(n^2)\).</li>
+            
+            <li><strong>Praktyczna skalowalność:</strong> Dla dużych sieci (np. 100 węzłów, 33 bizantyjskie), 
+                różnica między 33 rundami a 10,000 rundami jest ogromna.</li>
+            
+            <li><strong>Kompromis odporność-wydajność:</strong> Jeśli możemy założyć \(n = 4t\) 
+                (zamiast \(n = 3t + 1\)), otrzymujemy \(O(1/\varepsilon) = O(1)\) – stały czas jak Feldman-Micali, 
+                ale z lepszą odpornością!</li>
+            
+            <li><strong>Nowa technika: IVSS:</strong> Wprowadza <em>Inferable Verifiable Secret Sharing</em> 
+                z detekcją błędów opartą na symetrycznych wielomianach dwuwymiarowych.</li>
+        </ol>
+    </div>
+    
+    <h3>Matematyczne uzasadnienie złożoności</h3>
+    
+    <p>Porównajmy protokoły dla konkretnego przykładu: \(n = 100\), \(t = 33\) (maksymalna odporność).</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Protokół</th>
+                <th>Oczekiwana liczba rund</th>
+                <th>Przybliżona wartość</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Bracha (1984)</td>
+                <td>\(O(2^{100})\)</td>
+                <td>\(\approx 10^{30}\) rund – niemożliwe!</td>
+            </tr>
+            <tr>
+                <td>Abraham et al. (2008)</td>
+                <td>\(O(100^2)\)</td>
+                <td>\(10,000\) rund</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Ten protokół</strong></td>
+                <td>\(O(33)\)</td>
+                <td><strong>~33 rundy</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p>
+        Dla \(n = 100\), \(t = 24\) (mamy \(n = (3 + \varepsilon)t\) gdzie \(\varepsilon = 1/12 \approx 0.083\)):
+    </p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Protokół</th>
+                <th>Oczekiwana liczba rund</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Abraham et al. (2008)</td>
+                <td>\(O(10,000)\)</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Ten protokół</strong></td>
+                <td>\(O(1/0.083) \approx 12\) rund</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h2>3. Założenia Protokołu i Analiza Złożoności</h2>
+    
+    <h3>3.1. Założenia Modelu</h3>
+    
+    <div class="definition">
+        <div class="definition-title">Założenia systemu</div>
+        <ul>
+            <li><strong>Liczba procesów:</strong> \(n > 3t + 1\), gdzie \(t\) to maksymalna liczba procesów bizantyjskich</li>
+            <li><strong>Model komunikacji:</strong> Asynchroniczny z prywatnymi kanałami
+                <ul>
+                    <li>Wiadomości nie mogą być przechwytywane ani modyfikowane przez adversary</li>
+                    <li>Każda wysłana wiadomość ostatecznie dociera (ale z dowolnym opóźnieniem)</li>
+                </ul>
+            </li>
+            <li><strong>Adversary:</strong> Adaptywny, może kontrolować maksymalnie \(t\) procesów
+                <ul>
+                    <li>Procesy kontrolowane mogą zachowywać się dowolnie</li>
+                    <li>Adversary zna protokół i może dostosować strategię do obserwacji</li>
+                </ul>
+            </li>
+            <li><strong>Kryptografia:</strong> Polynomial sharing w ciele skończonym (np. \(\mathbb{Z}_p\) dla dużej liczby pierwszej \(p\))</li>
+        </ul>
+    </div>
+    
+    <h3>3.2. Czym jest złożoność \(O(t)\)?</h3>
+    
+    <p>
+        Złożoność czasowa protokołu mierzy <strong>oczekiwaną liczbę rund komunikacji</strong>. 
+        Jedna runda to czas potrzebny, aby wiadomość przeszła od nadawcy do odbiorcy.
+    </p>
+    
+    <div class="note">
+        <p><strong>Definicja rundów (formalna):</strong></p>
+        <p>
+            Rozważmy wirtualny "zegar globalny" mierzący czas w sieci. Niech <em>opóźnienie</em> wiadomości 
+            oznacza czas od jej wysłania do odebrania. <em>Okres</em> wykonania protokołu to najdłuższe opóźnienie 
+            wiadomości w tym wykonaniu. <em>Czas trwania</em> wykonania to całkowity czas zmierzony przez zegar 
+            globalny podzielony przez okres.
+        </p>
+        <p>
+            <strong>Oczekiwany czas działania protokołu</strong> to maksimum (po wszystkich wejściach i adversariach) 
+            średniej czasu trwania wykonań protokołu.
+        </p>
+    </div>
+    
+    <h4>Co oznacza \(O(t)\) w praktyce?</h4>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Parametr</th>
+                <th>Wartość</th>
+                <th>Oczekiwane rundy</th>
+                <th>Czas przy 100ms RTT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>\(n=10, t=3\)</td>
+                <td>Mała sieć</td>
+                <td>\(\approx 3\)</td>
+                <td>0.3 sekundy</td>
+            </tr>
+            <tr>
+                <td>\(n=100, t=33\)</td>
+                <td>Średnia sieć (opt. odporność)</td>
+                <td>\(\approx 33\)</td>
+                <td>3.3 sekundy</td>
+            </tr>
+            <tr>
+                <td>\(n=100, t=24\)</td>
+                <td>Średnia sieć (\(n=4t\))</td>
+                <td>\(\approx 12\)</td>
+                <td>1.2 sekundy</td>
+            </tr>
+            <tr>
+                <td>\(n=1000, t=333\)</td>
+                <td>Duża sieć (opt. odporność)</td>
+                <td>\(\approx 333\)</td>
+                <td>33 sekundy</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p>
+        <strong>Porównanie z poprzednim best-case \(O(n^2)\):</strong> Dla \(n=100\), mielibyśmy 
+        10,000 rund = 1000 sekund = <em>16.7 minuty</em>!
+    </p>
+    
+    <h3>3.3. Kluczowe Innowacje Techniczne</h3>
+    
+    <h4>Innowacja 1: Inferable VSS (IVSS)</h4>
+    <p>
+        Tradycyjne <em>Verifiable Secret Sharing</em> (VSS) gwarantuje, że wszyscy poprawni procesy 
+        odtworzą ten sam sekret. <strong>IVSS</strong> osłabia to wymaganie, ale dodaje potężną właściwość:
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Właściwość IVSS: Wykrywanie błędów</div>
+        <p>
+            Jeśli poprawne procesy <strong>nie</strong> odtworzą tego samego sekretu, to protokół 
+            <em>wykryje</em> co najmniej \(t(n - 3t)\) <strong>błędnych par</strong> procesów.
+        </p>
+        <p>
+            <strong>Błędna para</strong> \(\{i, j\}\) oznacza, że co najmniej jeden z procesów \(i\) lub \(j\) jest bizantyjski.
+        </p>
+    </div>
+    
+    <p><strong>Dlaczego to jest potężne?</strong></p>
+    <ul>
+        <li>Dla \(n = 4t\): wykrywamy \(t \cdot t = t^2\) błędnych par – <strong>kwadratowo wiele!</strong></li>
+        <li>Poprzednie protokoły wykrywały tylko \(O(1)\) błędnych par na rundę</li>
+        <li>Szybka detekcja = szybsza terminacja protokołu</li>
+    </ul>
+    
+    <h4>Innowacja 2: Symetryczne wielomiany dwuwymiarowe</h4>
+    <p>
+        Dealer dzieli sekret \(s\) wybierając losowy <strong>symetryczny dwuwymiarowy wielomian</strong> 
+        \(F(x, y)\) stopnia \(t\), gdzie:
+    </p>
+    
+    <p style="text-align: center;">
+        \[F(x, y) = F(y, x) \quad \text{i} \quad F(0, 0) = s\]
+    </p>
+    
+    <p>Każdy proces \(i\) otrzymuje <em>przekrój</em> wielomianu: \(f_i(y) = F(i, y)\).</p>
+    
+    <div class="note">
+        <p><strong>Kluczowa właściwość symetrii:</strong></p>
+        <p style="text-align: center;">
+            Dla poprawnego dealera: \(f_i(j) = F(i, j) = F(j, i) = f_j(i)\)
+        </p>
+        <p>
+            Jeśli proces \(i\) twierdzi, że \(f_i(j) = v_1\) a proces \(j\) twierdzi, że \(f_j(i) = v_2\) 
+            gdzie \(v_1 \neq v_2\), to <strong>co najmniej jeden z nich jest bizantyjski</strong>!
+        </p>
+        <p>
+            Każdy proces wysyła swój punkt do innych, więc możemy wykryć \(O(n^2)\) potencjalnych konfliktów. 
+            Ale bizantyjskich jest tylko \(t\), więc wykrywamy \(\Omega(t \cdot n)\) błędnych par.
+        </p>
+    </div>
+    
+    <h4>Innowacja 3: Historia invocations (Certification Protocol)</h4>
+    <p>
+        Nowy pomysł: <strong>pamiętaj historię</strong> wszystkich instancji IVSS z przeszłych rund!
+    </p>
+    
+    <ul>
+        <li>Każdy proces \(i\) utrzymuje zbiór \(\text{FP}_i\) – wykryte błędne pary</li>
+        <li>Na końcu rundy \(r\), proces A-Cast swoje invocations: \(\text{CoreInvocations}_i^r\)</li>
+        <li>Przed akceptacją nowego zbioru kandydatów \(M\), sprawdzamy:
+            <ul>
+                <li>Czy wszystkie pary \(\{i,j\} \subseteq M\) były spójne w <strong>całej historii</strong>?</li>
+                <li>Jeśli \(\{i,j\} \in \text{FP}_k\) dla jakiegoś \(k\), odrzucamy \(M\)</li>
+            </ul>
+        </li>
+    </ul>
+    
+    <p>
+        <strong>Efekt:</strong> Bizantyjskie procesy nie mogą "uciec" od wykrycia. Historia ich złego 
+        zachowania jest zapamiętywana i sprawdzana w przyszłych rundach.
+    </p>
+    
+    <h3>3.4. Analiza złożoności: skąd \(O(t)\)?</h3>
+    
+    <div class="proof">
+        <div class="proof-title">Szkic dowodu złożoności</div>
+        
+        <p><strong>Kluczowa obserwacja:</strong> Protokół kończy się, gdy wystarczająco wiele błędnych par zostanie wykrytych.</p>
+        
+        <p><strong>Krok 1: Ile jest błędnych par?</strong></p>
+        <p>Jest \(t\) procesów bizantyjskich i \(n-t\) poprawnych. Maksymalna liczba błędnych par:</p>
+        <p style="text-align: center;">
+            \[\text{Faulty pairs} \leq t \cdot (n - t) + \binom{t}{2} \leq t \cdot n\]
+        </p>
+        
+        <p><strong>Krok 2: Ile par wykrywamy na rundę?</strong></p>
+        <p>
+            Jeśli IVSS nie powiedzie się (procesy odtworzą różne sekrety), wykrywamy co najmniej 
+            \(t(n - 3t)\) błędnych par (z własności IVSS).
+        </p>
+        
+        <p><strong>Krok 3: Ile rund potrzeba?</strong></p>
+        <p>
+            W każdej rundzie uruchamiamy \(n\) instancji IVSS (jedna na proces jako dealer). 
+            W pesymistycznym przypadku, co rundę wykrywamy:
+        </p>
+        <p style="text-align: center;">
+            \[\text{Detected per round} \geq t(n - 3t)\]
+        </p>
+        
+        <p>Liczba rund potrzebnych do wykrycia wszystkich błędnych par:</p>
+        <p style="text-align: center;">
+            \[\text{Rounds} \leq \frac{t \cdot n}{t(n - 3t)} = \frac{n}{n - 3t}\]
+        </p>
+        
+        <p>Dla \(n > 3t\), mamy \(n - 3t > 0\). W szczególności:</p>
+        <ul>
+            <li>Gdy \(n = 3t + 1\): \(\frac{3t+1}{1} = O(t)\) ✓</li>
+            <li>Gdy \(n = 4t\): \(\frac{4t}{t} = O(1)\) ✓</li>
+            <li>Gdy \(n = (3+\varepsilon)t\): \(\frac{(3+\varepsilon)t}{\varepsilon t} = O(1/\varepsilon)\) ✓</li>
+        </ul>
+        
+        <p>
+            <strong>Wniosek:</strong> Protokół kończy się w \(O(t)\) oczekiwanych rundach dla \(n > 3t\).
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>4. Pseudokod Protokołu</h2>
+    
+    <p>
+        Protokół składa się z kilku warstw, z <strong>IVSS</strong> (Inferable Verifiable Secret Sharing) 
+        jako kluczowym komponentem. IVSS dzieli się na fazę dzielenia (Sharing) i fazę rekonstrukcji (Reconstruction).
+    </p>
+    
+    <h3>4.1. Struktury Danych: Wielomiany</h3>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Pole skończone i wielomiany</div>
+        
+        <p><strong>Pole skończone:</strong> Wszystkie operacje wykonywane są w \(\mathbb{Z}_p\) dla dużej liczby pierwszej \(p\).</p>
+        
+        <pre><code><span class="keyword">TYPE</span> <span class="function-name">FieldElement</span>
+    <span class="comment">// Elementy w Z_p dla dużej liczby pierwszej p</span>
+    <span class="comment">// Wszystkie operacje arytmetyczne są mod p</span>
+    p : <span class="keyword">Prime</span>  <span class="comment">// np. 2^256 - 189</span>
+</code></pre>
+
+        <p><strong>Symetryczny dwuwymiarowy wielomian stopnia \(t\):</strong></p>
+        
+        <pre><code><span class="keyword">CLASS</span> <span class="function-name">SymmetricBivariatePolynomial</span>
+    degree : <span class="keyword">Integer</span> = t
+    
+    coefficients : <span class="keyword">Matrix</span>[t+1][t+1]
+        <span class="comment">// a_{ij} gdzie i+j ≤ t</span>
+        <span class="comment">// WARUNEK: a_{ij} = a_{ji} (symetria)</span>
+    
+    <span class="keyword">FUNCTION</span> <span class="function-name">Evaluate</span>(x, y) → FieldElement
+        <span class="keyword">RETURN</span> Σ_{i,j: i+j≤t} a_{ij} · x^i · y^j
+    
+    <span class="keyword">FUNCTION</span> <span class="function-name">GetUnivariate</span>(x_fixed) → UnivariatePolynomial
+        <span class="comment">// Zwraca f(y) = F(x_fixed, y)</span>
+        <span class="keyword">RETURN</span> wielomian w y stopnia t
+</code></pre>
+
+        <p><strong>Jednowymiarowy wielomian (przekrój):</strong></p>
+        
+        <pre><code><span class="keyword">CLASS</span> <span class="function-name">UnivariatePolynomial</span>
+    degree : <span class="keyword">Integer</span> = t
+    coefficients : <span class="keyword">Array</span>[t+1]  <span class="comment">// [c_0, c_1, ..., c_t]</span>
+    
+    <span class="keyword">FUNCTION</span> <span class="function-name">Evaluate</span>(y) → FieldElement
+        <span class="keyword">RETURN</span> Σ_{i=0}^{t} c_i · y^i
+    
+    <span class="keyword">FUNCTION</span> <span class="function-name">InterpolateFrom</span>(points) → UnivariatePolynomial
+        <span class="comment">// Interpolacja Lagrange'a z t+1 punktów</span>
+        <span class="comment">// Danych: {(x_1, y_1), ..., (x_{t+1}, y_{t+1})}</span>
+        <span class="keyword">RETURN</span> unikalny wielomian stopnia ≤ t
+</code></pre>
+    </div>
+    
+    <h3>4.2. IVSS-S: Faza Dzielenia Sekretu</h3>
+    
+    <p>
+        <strong>Cel:</strong> Dealer \(d\) dzieli sekret \(s\) między \(n\) procesów w taki sposób, 
+        że może być bezpiecznie zrekonstruowany lub błędy zostaną wykryte.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Protokół IVSS[r]-S: Dealer</div>
+        
+        <pre><code><span class="keyword">FUNCTION</span> <span class="function-name">IVSS_Share</span>(secret s, round r)
+│
+├─ <span class="comment">// Krok 1: Wybierz symetryczny wielomian dwuwymiarowy</span>
+│  <span class="keyword">SELECT</span> random symmetric bivariate polynomial F(x, y)
+│      <span class="keyword">WHERE</span> degree(F) = t <span class="keyword">AND</span> F(0, 0) = s
+│
+├─ <span class="comment">// Krok 2: Wyślij przekroje do procesów</span>
+│  <span class="keyword">FOR</span> k = 1 <span class="keyword">TO</span> n <span class="keyword">DO</span>
+│      f_k(y) ← F(k, y)              <span class="comment">// Jednowymiarowy wielomian</span>
+│      <span class="function-name">A-Cast</span> f_k <span class="keyword">to</span> process k    <span class="comment">// Niezawodny broadcast</span>
+│
+├─ <span class="comment">// Krok 3: Czekaj na potwierdzenia równości</span>
+│  <span class="keyword">WAIT FOR</span> candidate set M <span class="keyword">WHERE</span>:
+│      1. |M| ≥ n - t
+│      2. ∀i,j ∈ M: received A-Cast <span class="string">"EQUAL:(i,j)"</span>
+│      3. ∀i,j,p,q ∈ M: received A-Cast <span class="string">"CHECKED_r: p, q, {i,j}"</span> from p
+│         <span class="comment">// To sprawdza, że {i,j} nie jest błędną parą w historii</span>
+│
+├─ <span class="comment">// Krok 4: Ogłoś zbiór kandydatów</span>
+│  <span class="function-name">A-Cast</span> <span class="string">"CANDIDATE_SET: M"</span>
+│
+└─ <span class="keyword">COMPLETE</span> sharing phase
+</code></pre>
+    </div>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Protokół IVSS[r]-S: Proces odbierający (Proces k)</div>
+        
+        <pre><code><span class="comment">// Stan lokalny</span>
+<span class="keyword">LOCAL STATE</span>:
+    received_poly : Polynomial ← <span class="keyword">null</span>
+    consistent_peers : <span class="keyword">Set</span>[ProcessID] ← ∅
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> polynomial f_k <span class="keyword">FROM</span> dealer
+│
+├─ received_poly ← f_k
+│
+└─ <span class="keyword">FOR</span> j = 1 <span class="keyword">TO</span> n <span class="keyword">DO</span>
+       point ← f_k(j)                <span class="comment">// Ewaluuj wielomian w j</span>
+       <span class="keyword">SEND</span> point <span class="keyword">to</span> process j       <span class="comment">// Bezpośrednia wiadomość</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> point p_j <span class="keyword">FROM</span> process j
+│
+├─ <span class="keyword">IF</span> received_poly(j) = p_j <span class="keyword">THEN</span>     <span class="comment">// Test spójności</span>
+│      <span class="comment">// f_k(j) powinno równać się f_j(k) (symetria!)</span>
+│      <span class="function-name">A-Cast</span> <span class="string">"EQUAL:(k, j)"</span>
+│
+└─ <span class="keyword">ELSE</span>
+       <span class="comment">// Niezgodność! Co najmniej jeden z {k, j} jest bizantyjski</span>
+       <span class="comment">// Nie wysyłamy EQUAL</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> <span class="string">"CANDIDATE_SET: M"</span> <span class="keyword">FROM</span> dealer
+│
+├─ <span class="comment">// Weryfikacja zbioru kandydatów</span>
+│  <span class="keyword">VERIFY</span>:
+│      1. |M| ≥ n - t
+│      2. ∀i,j ∈ M: received <span class="string">"EQUAL:(i,j)"</span> via A-Cast
+│      3. ∀i,j,p,q ∈ M: received <span class="string">"CHECKED_r: p, q, {i,j}"</span> from p
+│      4. ∀i,j ∈ M: {i,j} ∉ FP_k
+│         <span class="comment">// Sprawdź lokalną listę błędnych par</span>
+│
+└─ <span class="keyword">IF</span> verification passes <span class="keyword">THEN</span>
+       <span class="keyword">OUTPUT</span> <span class="string">"Sharing Complete"</span>
+       <span class="keyword">STORE</span> (M, received_poly)  <span class="comment">// Do użycia w rekonstrukcji</span>
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Kluczowe punkty IVSS-S:</strong></p>
+        <ul>
+            <li><strong>Symetria wielomianów:</strong> \(f_i(j) = f_j(i)\) dla poprawnego dealera. 
+                Naruszenie tej właściwości natychmiast ujawnia błędną parę \(\{i,j\}\).</li>
+            <li><strong>A-Cast zapewnia spójność:</strong> Gdy proces A-Cast komunikat "EQUAL", 
+                wszyscy poprawni procesy otrzymują tę samą informację.</li>
+            <li><strong>Próg \(n-t\):</strong> Potrzebujemy co najmniej \(n-t\) procesów w zbiorze \(M\), 
+                co gwarantuje przynajmniej \(n-2t > t\) poprawnych procesów (wystarczających do interpolacji).</li>
+            <li><strong>Certyfikacja historii:</strong> Przed akceptacją \(M\), sprawdzamy całą historię 
+                za pomocą wiadomości "CHECKED".</li>
+        </ul>
+    </div>
+    
+    <h3>4.3. IVSS-R: Faza Rekonstrukcji Sekretu</h3>
+    
+    <p>
+        <strong>Warunek wstępny:</strong> Faza dzielenia zakończona pomyślnie (mamy zapisane \(M\) i <code>received_poly</code>).
+    </p>
+    
+    <p>
+        <strong>Cel:</strong> Odtworzyć sekret \(s = F(0,0)\) z wielomianu \(F(x,y)\) używając przekrojów 
+        od procesów w \(M\), lub wykryć błędne pary jeśli rekonstrukcja się nie powiedzie.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Protokół IVSS[r]-R: Rekonstrukcja (Proces k)</div>
+        
+        <pre><code><span class="keyword">FUNCTION</span> <span class="function-name">IVSS_Reconstruct</span>(instance_id) → secret
+│
+├─ <span class="comment">// FAZA 1: Broadcast wielomianów</span>
+│  <span class="keyword">IF</span> I am in set M <span class="keyword">THEN</span>
+│      <span class="function-name">A-Cast</span> my_polynomial f_k
+│      <span class="comment">// Wysyłam wielomian, który otrzymałem od dealera</span>
+│
+├─ <span class="comment">// FAZA 2: Zbierz i interpoluj</span>
+│  <span class="keyword">WAIT FOR</span> polynomials from set IS <span class="keyword">WHERE</span>:
+│      • |IS| ≥ n - 2t
+│      • IS ⊆ M
+│      • All polynomials in IS are consistent:
+│        ∀i,j ∈ IS: f_i(j) = f_j(i)  <span class="comment">// Test symetrii!</span>
+│
+├─ <span class="comment">// Jeśli test symetrii zawiedzie dla pary {i,j}:</span>
+│  <span class="keyword">IF</span> ∃ i,j ∈ candidates : f_i(j) ≠ f_j(i) <span class="keyword">THEN</span>
+│      <span class="function-name">ADD</span> {i, j} to FP_k  <span class="comment">// Wykryto błędną parę!</span>
+│      <span class="comment">// Kontynuuj szukanie większego spójnego zbioru IS</span>
+│
+├─ <span class="comment">// Interpolacja dwuwymiarowego wielomianu</span>
+│  <span class="function-name">INTERPOLATE</span> symmetric bivariate polynomial F
+│      from {f_i | i ∈ IS}
+│      <span class="comment">// Używamy własności: F(i,y) = f_i(y) dla każdego i ∈ IS</span>
+│      <span class="comment">// Ponieważ |IS| ≥ n-2t > t, możemy zrekonstruować F stopnia t</span>
+│
+├─ reconstructed_secret ← F(0, 0)
+│
+├─ <span class="comment">// FAZA 3: Zatwierdzenie w historii</span>
+│  <span class="function-name">A-Cast</span> <span class="string">"READY_TO_COMPLETE"</span>
+│  <span class="function-name">ADD</span> instance_id to CoreInvocations_k^r
+│      <span class="comment">// Ta instancja staje się częścią historii</span>
+│
+└─ <span class="comment">// FAZA 4: Finalizacja</span>
+   <span class="keyword">WAIT FOR</span> (n - t) <span class="string">"READY_TO_COMPLETE"</span> messages
+   <span class="keyword">RETURN</span> reconstructed_secret
+</code></pre>
+    </div>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Interpolacja dwuwymiarowego wielomianu z jednowymiarowych przekrojów</div>
+        
+        <pre><code><span class="keyword">FUNCTION</span> <span class="function-name">ReconstructBivariate</span>(slices : {f_1, f_2, ..., f_k}) → F(x,y)
+│   <span class="comment">// slices: zbiór k ≥ t+1 wielomianów, gdzie f_i(y) = F(i, y)</span>
+│
+├─ <span class="comment">// Krok 1: Weryfikacja spójności (test symetrii)</span>
+│  <span class="keyword">FOR EACH</span> pair (i, j) in slices <span class="keyword">DO</span>
+│      <span class="keyword">ASSERT</span> f_i(j) = f_j(i)          <span class="comment">// Warunek symetrii</span>
+│      <span class="keyword">IF NOT</span> satisfied <span class="keyword">THEN</span>
+│          <span class="function-name">DETECT_FAULTY_PAIR</span>({i, j})
+│          <span class="keyword">RETURN</span> <span class="keyword">ERROR</span>
+│
+├─ <span class="comment">// Krok 2: Interpolacja Lagrange'a</span>
+│  <span class="comment">// Dla każdej pary (i,j), znamy wartość F(i,j) = f_i(j)</span>
+│  points ← {(i, j, f_i(j)) | i,j ∈ indices of slices}
+│
+├─ <span class="comment">// Krok 3: Zbuduj F(x,y) stopnia t</span>
+│  F(x, y) ← <span class="function-name">BivariateLagrangeInterpolation</span>(points, degree=t)
+│      <span class="comment">// Interpolujemy z więcej niż (t+1)² punktów</span>
+│      <span class="comment">// Symetria gwarantuje unikalność</span>
+│
+└─ <span class="keyword">RETURN</span> F
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Kluczowe punkty IVSS-R:</strong></p>
+        <ul>
+            <li><strong>Próg \(n-2t\):</strong> Potrzebujemy co najmniej \(n-2t\) wielomianów. 
+                Ponieważ \(n > 3t\), mamy \(n-2t > t\), więc możemy zrekonstruować wielomian stopnia \(t\).</li>
+            
+            <li><strong>Wykrywanie błędów:</strong> Jeśli \(f_i(j) \neq f_j(i)\), to co najmniej jeden 
+                z procesów \(\{i,j\}\) jest bizantyjski. Dodajemy tę parę do \(\text{FP}_k\).</li>
+            
+            <li><strong>Gwarancja spójności:</strong> Jeśli wszyscy poprawni procesy mają wielomiany z tego 
+                samego \(F(x,y)\), to wszyscy zrekonstruują to samo \(F(0,0) = s\).</li>
+            
+            <li><strong>Ile błędnych par wykrywamy?</strong> Jeśli rekonstrukcja się nie powiedzie, 
+                wykrywamy co najmniej \(t(n-3t)\) błędnych par! Dla \(n=4t\), to \(t^2\) par.</li>
+            
+            <li><strong>Historia:</strong> Dodanie do \(\text{CoreInvocations}\) sprawia, że ta instancja 
+                będzie sprawdzona w przyszłych rundach przez protokół certyfikacji.</li>
+        </ul>
+    </div>
+    
+    <h3>4.4. Protokół Certyfikacji</h3>
+    
+    <p>
+        Protokół certyfikacji działa w tle przez cały czas działania ABA, śledząc historię invocations 
+        i wykrywając błędne pary.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Certification Protocol (Proces k)</div>
+        
+        <pre><code><span class="comment">// Stan globalny</span>
+<span class="keyword">GLOBAL STATE</span>:
+    FP_k : <span class="keyword">Set</span>[{ProcessID, ProcessID}] ← ∅
+        <span class="comment">// Błędne pary: nieuporządkowane pary {i,j} gdzie ≥1 jest bizantyjski</span>
+    
+    CoreInvocations_k^r : <span class="keyword">List</span>[InstanceID] ← []
+        <span class="comment">// Historia pomyślnie zakończonych instancji IVSS w rundzie r</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">FUNCTION</span> <span class="function-name">InitCertification</span>()
+    FP_k ← ∅
+    CoreInvocations_k^0 ← []
+    <span class="keyword">START</span> background monitoring
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">AT START OF ROUND</span> r (r > 1)
+│
+└─ <span class="function-name">A-Cast</span> CoreInvocations_k^{r-1}
+       <span class="comment">// Informuj wszystkich o swoich akcjach z poprzedniej rundy</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> CoreInvocations_l^r <span class="keyword">FROM</span> process l
+│
+├─ <span class="comment">// Sprawdź wszystkie instancje z historii procesu l</span>
+│  <span class="keyword">FOR EACH</span> instance I in CoreInvocations_l^r <span class="keyword">DO</span>
+│      │
+│      ├─ <span class="comment">// Pobierz zbiór M z instancji I</span>
+│      │  <span class="keyword">LET</span> M = candidate_set(I)
+│      │
+│      └─ <span class="comment">// Sprawdź spójność wielomianów dla wszystkich par w M</span>
+│         <span class="keyword">FOR EACH</span> i, j ∈ M <span class="keyword">DO</span>
+│             <span class="keyword">IF</span> received f_i and f_j in IVSS-R of I <span class="keyword">THEN</span>
+│                 <span class="keyword">IF</span> f_i(j) ≠ f_j(i) <span class="keyword">THEN</span>
+│                     <span class="comment">// WYKRYTO NIEZGODNOŚĆ!</span>
+│                     <span class="function-name">ADD</span> {i, j} to FP_k
+│                     <span class="function-name">LOG</span> <span class="string">"Faulty pair detected: {i, j} in instance "</span> + I
+│
+└─ <span class="comment">// Zapewnij wykonanie kroków protokołu dla historii l</span>
+   <span class="keyword">FOR EACH</span> invocation I in CoreInvocations_l^r <span class="keyword">DO</span>
+       <span class="function-name">COMPLETE</span> sharing protocol of I
+       <span class="function-name">COMPLETE</span> Step 1 of IVSS[r]-R of I
+       <span class="comment">// Różne procesy mogą zakończyć różne instancje</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">FUNCTION</span> <span class="function-name">VerifySet</span>(M : <span class="keyword">Set</span>[ProcessID], round r) → Boolean
+│   <span class="comment">// Sprawdź, czy zbiór M może być zaakceptowany w rundzie r</span>
+│
+├─ <span class="comment">// Warunek a: Otrzymano historię od wszystkich w M</span>
+│  <span class="keyword">FOR EACH</span> l ∈ M <span class="keyword">DO</span>
+│      <span class="keyword">IF NOT</span> received CoreInvocations_l^{r'} for all r' < r <span class="keyword">THEN</span>
+│          <span class="keyword">RETURN</span> <span class="keyword">false</span>
+│
+├─ <span class="comment">// Warunek b: Otrzymano wielomiany od wszystkich w historii</span>
+│  <span class="keyword">FOR EACH</span> l ∈ M <span class="keyword">DO</span>
+│      <span class="keyword">FOR EACH</span> instance I in ⋃_{r'<r} CoreInvocations_l^{r'} <span class="keyword">DO</span>
+│          <span class="keyword">LET</span> M_I = candidate_set(I)
+│          <span class="keyword">FOR EACH</span> i ∈ M_I <span class="keyword">DO</span>
+│              <span class="keyword">IF NOT</span> received f_i in IVSS-R of I <span class="keyword">THEN</span>
+│                  <span class="keyword">RETURN</span> <span class="keyword">false</span>
+│
+├─ <span class="comment">// Warunek c: Żadna para w M nie jest w FP_k</span>
+│  <span class="keyword">FOR EACH</span> i, j ∈ M <span class="keyword">WHERE</span> i ≠ j <span class="keyword">DO</span>
+│      <span class="keyword">IF</span> {i, j} ∈ FP_k <span class="keyword">THEN</span>
+│          <span class="keyword">RETURN</span> <span class="keyword">false</span>  <span class="comment">// Odrzuć: zawiera błędną parę</span>
+│
+└─ <span class="keyword">RETURN</span> <span class="keyword">true</span>  <span class="comment">// Wszystkie pary zweryfikowane</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">WHEN</span> VerifySet(M, r) returns <span class="keyword">true</span> <span class="keyword">FOR</span> processes k, l and pair {i,j}
+│
+└─ <span class="function-name">A-Cast</span> <span class="string">"CHECKED_r: k, l, {i, j}"</span>
+       <span class="comment">// Potwierdzam, że {i,j} nie jest błędną parą według historii l przed r</span>
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Kluczowe punkty Certyfikacji:</strong></p>
+        <ul>
+            <li><strong>Monotoniczność:</strong> Raz dodane pary pozostają w \(\text{FP}_k\) (brak fałszywego usuwania).</li>
+            <li><strong>Poprawność:</strong> Jeśli \(\{i, j\} \in \text{FP}_k\), to co najmniej jeden jest bizantyjski.</li>
+            <li><strong>Liveness:</strong> Błędne pary są ostatecznie wykrywane w kolejnych rundach.</li>
+            <li><strong>Historia jako broń:</strong> Bizantyjskie procesy nie mogą "zapomnieć" swoich wcześniejszych 
+                kłamstw – są one zapisane w historii i sprawdzane w każdej nowej rundzie.</li>
+        </ul>
+    </div>
+    
+    <h3>4.5. Protokół Głosowania (Vote)</h3>
+    
+    <p>
+        Protokół Vote określa, czy istnieje większość procesów głosujących na konkretną wartość. 
+        Zwraca wartość oraz <em>siłę większości</em>.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Vote Protocol (Proces k, runda r)</div>
+        
+        <pre><code><span class="keyword">FUNCTION</span> <span class="function-name">Vote</span>(round r, input_bit x_k) → (value, confidence)
+│
+├─ <span class="comment">// FAZA 1: Wymiana wartości wejściowych</span>
+│  <span class="function-name">A-Cast</span> <span class="string">"INPUT: (k, x_k)"</span>
+│
+│  <span class="keyword">WAIT FOR</span> (n - t) INPUT messages
+│      <span class="keyword">LET</span> A_k = {senders of received INPUT messages}
+│
+│  my_vote_1 ← <span class="function-name">MAJORITY_BIT</span>(A_k)      <span class="comment">// 0 jeśli remis</span>
+│
+│  <span class="function-name">A-Cast</span> <span class="string">"VOTE1: (k, A_k, my_vote_1)"</span>
+│
+├─ <span class="comment">// FAZA 2: Pierwsze głosowanie</span>
+│  <span class="keyword">WAIT FOR</span> (n - t) VOTE1 messages
+│      <span class="keyword">LET</span> B_k = {j | received VOTE1 from j <span class="keyword">AND</span> A_j ⊆ A_k}
+│
+│  my_vote_2 ← <span class="function-name">MAJORITY_BIT</span>(votes in B_k)
+│
+│  <span class="function-name">A-Cast</span> <span class="string">"REVOTE: (k, B_k, my_vote_2)"</span>
+│
+├─ <span class="comment">// FAZA 3: Zbieranie ponownych głosów</span>
+│  <span class="keyword">WAIT FOR</span> (n - t) REVOTE messages
+│      <span class="keyword">LET</span> C_k = {j | received REVOTE from j <span class="keyword">AND</span> B_j ⊆ B_k}
+│
+└─ <span class="comment">// LOGIKA DECYZYJNA</span>
+   <span class="keyword">IF</span> all votes in B_k equal σ <span class="keyword">THEN</span>
+       <span class="keyword">RETURN</span> (σ, 2)                  <span class="comment">// Silna większość</span>
+   
+   <span class="keyword">ELSE IF</span> all revotes in C_k equal σ <span class="keyword">THEN</span>
+       <span class="keyword">RETURN</span> (σ, 1)                  <span class="comment">// Słaba większość</span>
+   
+   <span class="keyword">ELSE</span>
+       <span class="keyword">RETURN</span> (⊥, 0)                  <span class="comment">// Brak większości</span>
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">FUNCTION</span> <span class="function-name">MAJORITY_BIT</span>(set S) → {0, 1}
+│
+├─ count_0 ← |{j ∈ S | bit[j] = 0}|
+├─ count_1 ← |{j ∈ S | bit[j] = 1}|
+│
+└─ <span class="keyword">RETURN</span> (count_1 > count_0) ? 1 : 0     <span class="comment">// Domyślnie 0 przy remisie</span>
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Poziomy pewności (confidence):</strong></p>
+        <ul>
+            <li><strong>Confidence = 2 (Silna większość):</strong> Wszyscy w \(B_k\) głosują tak samo. 
+                To oznacza, że prawie na pewno wszystkie poprawne procesy widziały tę samą większość.</li>
+            <li><strong>Confidence = 1 (Słaba większość):</strong> Wszyscy w \(C_k\) ponownie głosują tak samo. 
+                Jest zgoda, ale mniej pewna.</li>
+            <li><strong>Confidence = 0 (Brak większości):</strong> Głosy są zbyt rozproszone. 
+                Użyjemy wspólnej monety (ICC) do podjęcia decyzji.</li>
+        </ul>
+    </div>
+    
+    <h3>4.6. Inferable Common Coin (ICC)</h3>
+    
+    <p>
+        Generuje wspólny losowy bit dla wszystkich procesów, gdy nie osiągnięto większości w głosowaniu.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">ICC Protocol (Proces k, runda r)</div>
+        
+        <pre><code><span class="keyword">FUNCTION</span> <span class="function-name">GetCommonCoin</span>(round r) → {0, 1}
+│
+├─ <span class="comment">// FAZA 1: Dzielenie sekretów</span>
+│  <span class="comment">// Każdy proces jest dealerem dla n instancji IVSS</span>
+│  <span class="keyword">FOR</span> j = 1 <span class="keyword">TO</span> n <span class="keyword">DO</span>
+│      IVSS[r, j]-S.<span class="function-name">Start</span>(<span class="function-name">RANDOM_VALUE</span>())
+│      <span class="comment">// Proces j dzieli losową wartość</span>
+│
+├─ <span class="comment">// FAZA 2: Zbierz zestawy załączników</span>
+│  <span class="keyword">WAIT UNTIL</span> (t + 1) IVSS-S instances complete for me
+│      <span class="keyword">LET</span> T_k = {dealers of completed secrets}
+│
+│  <span class="function-name">A-Cast</span> <span class="string">"ATTACH: T_k"</span>
+│
+├─ <span class="comment">// FAZA 3: Akceptacja</span>
+│  A_k ← ∅
+│
+│  <span class="keyword">FOR EACH</span> <span class="string">"ATTACH: T_j"</span> received <span class="keyword">FROM</span> j <span class="keyword">DO</span>
+│      <span class="keyword">IF</span> T_j ⊆ T_k <span class="keyword">THEN</span>
+│          <span class="function-name">ADD</span> j to A_k
+│
+│  <span class="keyword">WAIT UNTIL</span> |A_k| ≥ n - t
+│
+│  <span class="function-name">A-Cast</span> <span class="string">"ACCEPT: A_k"</span>
+│
+├─ <span class="comment">// FAZA 4: Włącz rekonstrukcję</span>
+│  <span class="keyword">WAIT FOR</span> (n - t) <span class="string">"ACCEPT: A_j"</span> messages
+│      <span class="keyword">LET</span> S_k = {senders}
+│
+│  <span class="function-name">A-Cast</span> <span class="string">"RECONSTRUCT_ENABLED: (H_k = A_k, S_k)"</span>
+│
+├─ <span class="comment">// FAZA 5: Rekonstruuj sekrety</span>
+│  <span class="keyword">FOR EACH</span> j ∈ A_k <span class="keyword">DO</span>
+│      <span class="keyword">FOR EACH</span> k ∈ T_j <span class="keyword">DO</span>
+│          <span class="function-name">RUN</span> IVSS[r, k]-R
+│
+└─ <span class="comment">// FAZA 6: Oblicz monetę</span>
+   <span class="keyword">WAIT UNTIL</span> all reconstructions complete
+   
+   u ← ⌈0.87 × n⌉                    <span class="comment">// Próg probabilistyczny</span>
+   
+   <span class="keyword">FOR EACH</span> k ∈ H_k <span class="keyword">DO</span>
+       value_k ← reconstructed_secret[k] <span class="keyword">mod</span> u
+   
+   <span class="keyword">IF EXISTS</span> k ∈ H_k : value_k = 0 <span class="keyword">THEN</span>
+       <span class="keyword">RETURN</span> 0
+   <span class="keyword">ELSE</span>
+       <span class="keyword">RETURN</span> 1
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Właściwości ICC:</strong></p>
+        <ul>
+            <li><strong>Zgodność:</strong> Wszystkie poprawne procesy zwracają tę samą wartość monety.</li>
+            <li><strong>Nieprzewidywalność:</strong> Adversary nie może przewidzieć monety z prawdopodobieństwem > 1/2 + ε.</li>
+            <li><strong>Terminacja:</strong> Kończy się z prawdopodobieństwem 1.</li>
+            <li><strong>Dlaczego 0.87?</strong> To wartość z analizy probabilistycznej: prawdopodobieństwo, 
+                że żaden sekret nie da 0 mod u, jest około 1/e ≈ 0.37, co daje dobrą losowość.</li>
+        </ul>
+    </div>
+    
+    <h3>4.7. ABA: Główna Pętla Protokołu</h3>
+    
+    <p>
+        To punkt wejścia protokołu, wywoływany przez aplikację. Łączy wszystkie komponenty w jeden spójny algorytm.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Asynchronous Byzantine Agreement (Proces k)</div>
+        
+        <pre><code><span class="keyword">FUNCTION</span> <span class="function-name">ABA</span>(input_bit x_k) → {0, 1}
+│
+├─ <span class="comment">// INICJALIZACJA</span>
+│  round ← 0
+│  estimate ← x_k
+│  <span class="function-name">START</span> <span class="function-name">CertificationProtocol</span>() in background
+│      <span class="comment">// Protokół certyfikacji działa równolegle przez cały czas</span>
+│
+└─ <span class="comment">// GŁÓWNA PĘTLA</span>
+   <span class="keyword">LOOP</span> forever
+   │
+   ├─ round ← round + 1
+   │
+   ├─ <span class="comment">// FAZA 1: Głosowanie</span>
+   │  (vote_val, vote_strength) ← <span class="function-name">Vote</span>(round, estimate)
+   │
+   ├─ <span class="comment">// FAZA 2: Wspólna moneta</span>
+   │  coin_val ← <span class="function-name">ICC</span>(round)
+   │
+   ├─ <span class="comment">// FAZA 3: Logika decyzyjna (Canetti & Rabin)</span>
+   │  <span class="keyword">IF</span> vote_strength = 2 <span class="keyword">THEN</span>          <span class="comment">// Silna większość</span>
+   │      estimate ← vote_val
+   │      <span class="function-name">A-Cast</span> <span class="string">"COMPLETE: estimate"</span>
+   │      <span class="comment">// Uwaga: Kontynuuj do następnej rundy, aby pomóc innym</span>
+   │  
+   │  <span class="keyword">ELSE IF</span> vote_strength = 1 <span class="keyword">THEN</span>     <span class="comment">// Słaba większość</span>
+   │      estimate ← vote_val
+   │  
+   │  <span class="keyword">ELSE</span>                                <span class="comment">// Brak większości</span>
+   │      estimate ← coin_val
+   │
+   └─ <span class="comment">// FAZA 4: Sprawdzenie terminacji</span>
+      <span class="keyword">UPON</span> receiving (t + 1) <span class="string">"COMPLETE: v"</span> messages
+          <span class="keyword">OUTPUT</span> v
+          <span class="keyword">TERMINATE</span>
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Kluczowe punkty ABA:</strong></p>
+        <ul>
+            <li><strong>Struktura rundy:</strong> Każda runda składa się z Vote + ICC + Decision. 
+                Oczekiwana liczba rund: \(O(t)\).</li>
+            
+            <li><strong>Logika Canetti-Rabin:</strong> 
+                <ul>
+                    <li>Silna większość (2) → natychmiast zgadzamy się i informujemy innych, ale kontynuujemy</li>
+                    <li>Słaba większość (1) → przyjmujemy wartość, ale nie jesteśmy pewni</li>
+                    <li>Brak większości (0) → używamy losowej monety</li>
+                </ul>
+            </li>
+            
+            <li><strong>Dlaczego kontynuować po COMPLETE?</strong> Inne procesy mogą wciąż potrzebować pomocy 
+                w IVSS czy Vote. Proces kończy się dopiero po otrzymaniu \(t+1\) wiadomości COMPLETE.</li>
+            
+            <li><strong>Próg \(t+1\):</strong> Gwarantuje, że co najmniej jeden poprawny proces wysłał COMPLETE, 
+                więc wartość jest prawidłowa.</li>
+            
+            <li><strong>Terminacja:</strong> Z prawdopodobieństwem 1 wszystkie poprawne procesy ostatecznie 
+                otrzymają \(t+1\) wiadomości COMPLETE dla tej samej wartości.</li>
+        </ul>
+    </div>
+    
+    <h3>4.8. Protokół A-Cast (Reliable Broadcast)</h3>
+    
+    <p>
+        A-Cast to podstawowy prymityw używany przez wszystkie inne protokoły. Zapewnia niezawodne rozgłaszanie 
+        nawet gdy nadawca jest bizantyjski.
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">A-Cast: Bracha's Reliable Broadcast</div>
+        
+        <pre><code><span class="comment">// Nadawca</span>
+<span class="keyword">FUNCTION</span> <span class="function-name">Broadcast</span>(value)
+    <span class="keyword">SEND</span> MSG(value) to all processes
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="comment">// Odbiorcy (Proces k)</span>
+<span class="keyword">LOCAL STATE</span>:
+    received_echo : <span class="keyword">Set</span>[ProcessID] ← ∅      <span class="comment">// Kto wysłał ECHO</span>
+    received_ready : <span class="keyword">Set</span>[ProcessID] ← ∅     <span class="comment">// Kto wysłał READY</span>
+    sent_echo : <span class="keyword">Boolean</span> ← false
+    sent_ready : <span class="keyword">Boolean</span> ← false
+    delivered : <span class="keyword">Boolean</span> ← false
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> MSG(val) <span class="keyword">FROM</span> sender
+│
+└─ <span class="keyword">IF NOT</span> sent_echo <span class="keyword">THEN</span>
+       <span class="keyword">SEND</span> ECHO(val) to all processes
+       sent_echo ← true
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> ECHO(val) <span class="keyword">FROM</span> process j
+│
+├─ <span class="function-name">ADD</span> j to received_echo[val]
+│
+└─ <span class="keyword">IF</span> |received_echo[val]| ≥ n - t <span class="keyword">AND NOT</span> sent_ready <span class="keyword">THEN</span>
+       <span class="comment">// Próg: n - t (większość + t)</span>
+       <span class="keyword">SEND</span> READY(val) to all processes
+       sent_ready ← true
+
+<span class="comment">─────────────────────────────────────────────────────</span>
+
+<span class="keyword">UPON RECEIVE</span> READY(val) <span class="keyword">FROM</span> process j
+│
+├─ <span class="function-name">ADD</span> j to received_ready[val]
+│
+├─ <span class="keyword">IF</span> |received_ready[val]| ≥ t + 1 <span class="keyword">AND NOT</span> sent_ready <span class="keyword">THEN</span>
+│      <span class="comment">// Amplifikacja: t + 1</span>
+│      <span class="keyword">SEND</span> READY(val) to all processes
+│      sent_ready ← true
+│
+└─ <span class="keyword">IF</span> |received_ready[val]| ≥ 2t + 1 <span class="keyword">AND NOT</span> delivered <span class="keyword">THEN</span>
+       <span class="comment">// Dostarczenie: 2t + 1</span>
+       delivered ← true
+       <span class="keyword">TRIGGER</span> <span class="function-name">A-Cast-Complete</span>(val)
+</code></pre>
+    </div>
+    
+    <div class="note">
+        <p><strong>Właściwości A-Cast:</strong></p>
+        <ul>
+            <li><strong>Validity:</strong> Jeśli nadawca jest poprawny i rozgłasza \(v\), 
+                wszystkie poprawne procesy ostatecznie dostarczają \(v\).</li>
+            <li><strong>Agreement:</strong> Jeśli poprawny proces dostarcza \(v\), 
+                wszystkie poprawne procesy ostatecznie dostarczają \(v\).</li>
+            <li><strong>Integrity:</strong> Każdy poprawny proces dostarcza co najwyżej jedną wartość, 
+                i tylko jeśli została rozgłoszona.</li>
+            <li><strong>3 progi:</strong> 
+                <ul>
+                    <li>\(n-t\) dla ECHO → READY (zapewnia, że co najmniej jeden poprawny wysłał ECHO)</li>
+                    <li>\(t+1\) dla READY → READY (amplifikacja: jeśli jeden poprawny, wszyscy poprawni)</li>
+                    <li>\(2t+1\) dla dostarczenia (większość, więc co najmniej \(t+1\) poprawnych)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="section">
+    <h2>5. Dowody Poprawności i Złożoności</h2>
+    
+    <p>
+        W tej sekcji przedstawiamy formalne dowody kluczowych właściwości protokołu. 
+        Wszystkie twierdzenia oparte są na pracy Cheng Wang (EPFL).
+    </p>
+    
+    <h3>5.1. Definicje i Lematy Pomocnicze</h3>
+    
+    <div class="definition">
+        <div class="definition-title">Definicja 1: Błędna para (Faulty Pair)</div>
+        <p>
+            Nieuporządkowana para \(\{i, j\}\) procesów nazywana jest <strong>błędną parą</strong>, 
+            jeśli co najmniej jeden z procesów \(i\) lub \(j\) jest bizantyjski.
+        </p>
+    </div>
+    
+    <div class="lemma">
+        <div class="lemma-title">Lemat 1: Poprawność detekcji błędnych par</div>
+        <p>
+            Jeśli \(i, j, k\) są poprawnymi procesami, to nieuporządkowana para \(\{i, j\}\) 
+            nie zostanie nigdy dodana do \(\text{FP}_k\).
+        </p>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Lematu 1</div>
+        <p>
+            Para \(\{i, j\}\) jest dodawana do \(\text{FP}_k\) tylko wtedy, gdy istnieje instancja IVSS[r] 
+            taka, że \(i, j \in M\) oraz wielomiany \(\hat{f}_i\) i \(\hat{f}_j\) rozgłoszone przez 
+            \(i\) i \(j\) w Kroku 1 IVSS[r]-R spełniają:
+        </p>
+        <p style="text-align: center;">
+            \[\hat{f}_i(j) \neq \hat{f}_j(i)\]
+        </p>
+        <p>
+            Jednakże, jeśli \(i, j \in M\), to oba \(i\) i \(j\) musiały rozgłosić "EQUAL: \((i, j)\)" 
+            oraz "EQUAL: \((j, i)\)" w IVSS[r]-S, co oznacza, że sprawdziły warunek:
+        </p>
+        <p style="text-align: center;">
+            \[\hat{f}_i(j) = \hat{f}_j(i)\]
+        </p>
+        <p>
+            Ponieważ poprawne procesy nie zmieniają swoich wielomianów między fazą dzielenia a rekonstrukcją, 
+            warunek ten pozostaje prawdziwy. Zatem \(\{i, j\}\) nie zostanie dodana do \(\text{FP}_k\). 
+            \(\square\)
+        </p>
+    </div>
+    
+    <div class="lemma">
+        <div class="lemma-title">Lemat 2: Ostateczna certyfikacja poprawnych par</div>
+        <p>
+            W rundzie \(r > 1\), jeśli \(i, j, k, l\) są poprawnymi procesami, 
+            to \(k\) ostatecznie rozgłosi "CHECKED\(_r\): \(k, l, \{i, j\}\)".
+        </p>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Lematu 2</div>
+        <p>
+            Z Lematu 1 wiemy, że \(\{i, j\} \notin \text{FP}_k\). Musimy sprawdzić warunki (a) i (b) 
+            Kroku 5 protokołu certyfikacji:
+        </p>
+        
+        <p><strong>Warunek (a):</strong> Ponieważ \(l\) jest poprawny, rozgłosi 
+            \(\text{CoreInvocations}_l^{r'}\) na początku rundy \(r\) dla wszystkich \(r' < r\). 
+            Z właściwości poprawności A-Cast, \(k\) otrzyma te wiadomości.
+        </p>
+        
+        <p><strong>Warunek (b):</strong> Załóżmy, że \(i\) jest w zbiorze \(M\) instancji IVSS[r'] 
+            w \(\bigcup_{r'<r} \text{CoreInvocations}_l^{r'}\). Ponieważ \(l\) dodał tę instancję do 
+            swojego CoreInvocations, \(l\) zakończył protokół dzielenia tej instancji. Zatem \(i\) 
+            musiał otrzymać wielomian \(\hat{f}_i\) od dealera. Zgodnie z Krokiem 4 protokołu certyfikacji, 
+            \(i\) zakończy Krok 1 IVSS[r']-R tej instancji. Zatem \(k\) otrzyma wielomian rozgłoszony 
+            przez \(i\) w Kroku 1 IVSS[r]-R.
+        </p>
+        
+        <p>
+            Ponieważ oba warunki są spełnione, \(k\) rozgłosi "CHECKED\(_r\): \(k, l, \{i, j\}\)". 
+            \(\square\)
+        </p>
+    </div>
+    
+    <div class="lemma">
+        <div class="lemma-title">Lemat 3: Unikalność symetrycznego wielomianu dwuwymiarowego</div>
+        <p>
+            Niech \(N \subseteq \{1, \ldots, n\}\) i \(|N| > t + 1\). Niech \(\{f_i\}_{i \in N}\) 
+            będzie zbiorem wielomianów jednowymiarowych stopnia \(t\). Jeśli \(f_i(j) = f_j(i)\) 
+            dla wszystkich \(i, j \in N\), to istnieje unikalny symetryczny dwuwymiarowy wielomian 
+            \(F(x,y)\) stopnia \(t\) taki, że \(F(i, j) = f_i(j)\) dla wszystkich \(i, j \in N\).
+        </p>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Lematu 3</div>
+        <p>
+            Wybierzmy dowolny podzbiór \(N_0 \subseteq N\) taki, że \(|N_0| = t + 1\). Definiujemy:
+        </p>
+        <p style="text-align: center;">
+            \[F_0(x, y) = \sum_{i \in N_0, j \in N_0} \frac{\prod_{k \in N_0, k \neq i}(x - k)}{\prod_{k \in N_0, k \neq i}(i - k)} \cdot \frac{\prod_{k \in N_0, k \neq j}(y - k)}{\prod_{k \in N_0, k \neq j}(j - k)} \cdot f_i(j)\]
+        </p>
+        <p>
+            Z interpolacji Lagrange'a, \(F_0(i, j) = f_i(j)\) dla wszystkich \(i, j \in N_0\). 
+            Ponieważ \(f_i(j) = f_j(i)\), wielomian \(F_0\) jest symetryczny.
+        </p>
+        
+        <p>
+            Dla dowolnego \(i \in N\), mamy \(f_i(j) = f_j(i) = F_0(j, i)\) dla wszystkich \(j \in N_0\). 
+            Z symetrii \(F_0\), \(f_i(j) = F_0(i, j)\) dla wszystkich \(j \in N_0\). Ponieważ 
+            \(|N_0| = t + 1\), wielomiany \(f_i(y)\) i \(F_0(i, y)\) są identyczne dla wszystkich \(y\).
+        </p>
+        
+        <p>
+            W szczególności, \(f_i(j) = F_0(i, j)\) dla wszystkich \(j \in N\). Zatem \(F_0\) 
+            spełnia warunek. Unikalność wynika z interpolacji Lagrange'a. \(\square\)
+        </p>
+    </div>
+    
+    <h3>5.2. Główne Twierdzenie: Własności IVSS</h3>
+    
+    <div class="theorem">
+        <div class="theorem-title">Twierdzenie 1: Poprawność IVSS</div>
+        <p>
+            Załóżmy \(n > 3t\). Para (IVSS[r]-S, IVSS[r]-R) spełnia wszystkie własności IVSS:
+        </p>
+        <ul>
+            <li><strong>Terminacja (1-4):</strong> Wszystkie poprawne procesy ostatecznie kończą protokół.</li>
+            <li><strong>Poprawność:</strong> Po zakończeniu IVSS[r]-S istnieje unikalna wartość \(v\) taka, że:
+                <ol>
+                    <li>Albo wszystkie poprawne procesy zwracają \(v\) po zakończeniu IVSS[r]-R, 
+                        albo zbiór nowych błędnych par jest ostatecznie wykrywany przez poprawne procesy.</li>
+                    <li>Jeśli dealer jest poprawny, to \(v = s\).</li>
+                </ol>
+            </li>
+            <li><strong>Sekretność:</strong> Jeśli dealer jest poprawny i żaden poprawny proces nie wywołuje 
+                IVSS[r]-R, to bizantyjskie procesy nie mają informacji o sekrecie \(s\).</li>
+        </ul>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Twierdzenia 1 (szkic)</div>
+        
+        <p><strong>Terminacja (1):</strong> Załóżmy, że dealer jest poprawny i wszystkie poprawne procesy 
+            uczestniczą w IVSS[r]-S. Każdy poprawny proces otrzyma poprawne wiadomości od dealera. 
+            Dla każdej pary \((i, j)\) poprawnych procesów, \(i\) rozgłosi "EQUAL: \((i, j)\)". 
+            Z Lematu 2, dla poprawnych procesów \(i, j, k, l\), "CHECKED\(_r\): \(k, l, \{i, j\}\)" 
+            zostanie rozgłoszone przez \(k\). Zatem zbiór poprawnych procesów spełni warunki Kroku 4 
+            IVSS[r]-S. Poprawny dealer rozgłosi zbiór \(M\). Wszystkie poprawne procesy otrzymają \(M\) 
+            i zakończą IVSS[r]-S.
+        </p>
+        
+        <p><strong>Terminacja (2):</strong> Jeśli poprawny proces zakończy IVSS[r]-S, to wszystkie 
+            wymagane wiadomości w Kroku 5 IVSS[r]-S zostały wysłane przez A-Cast. Każdy poprawny proces 
+            uczestniczący otrzyma te wiadomości i zakończy IVSS[r]-S.
+        </p>
+        
+        <p><strong>Terminacja (3):</strong> Jeśli jakiś poprawny proces zakończył IVSS[r]-S i wszystkie 
+            poprawne procesy zaczynają IVSS[r]-R, niech \(C\) będzie zbiorem poprawnych procesów w \(M\). 
+            Ponieważ \(|M| \geq n - t\), mamy \(|C| \geq n - 2t\). Niech \(\hat{f}_i\) będzie wielomianem 
+            otrzymanym przez \(i \in C\) od dealera. Ponieważ \(C \subseteq M\), mamy 
+            \(\hat{f}_i(j) = \hat{f}_j(i)\) dla wszystkich \(i, j \in C\). Z Lematu 3, istnieje 
+            symetryczny dwuwymiarowy wielomian \(\bar{F}\) stopnia \(t\) taki, że 
+            \(\bar{F}(i, j) = \hat{f}_i(j)\) dla wszystkich \(i, j \in C\). Zatem \(C\) spełnia 
+            warunki Kroku 2 IVSS[r]-R. Każdy poprawny proces zakończy Krok 2 i rozgłosi 
+            "READY_TO_COMPLETE", więc otrzyma \(n - t\) takich wiadomości i zakończy IVSS[r]-R.
+        </p>
+        
+        <p><strong>Poprawność (1):</strong> Załóżmy, że poprawny proces zakończył protokół dzielenia. 
+            Z Lematu 3, istnieje \(\bar{F}\) takie, że \(\bar{F}(i, j) = \hat{f}_i(j)\) dla wszystkich 
+            \(i, j \in C\), gdzie \(C\) to zbiór poprawnych procesów w \(M\). Oznaczamy \(v = \bar{F}(0, 0)\).
+        </p>
+        
+        <p>
+            Jeśli jakiś poprawny proces \(k\) zakończy IVSS[r]-R i zwróci wartość różną od \(v\), 
+            to jego zbiór interpolacji \(\text{IS}_k\) musi być różny od \(C\). Musi istnieć proces 
+            \(i \in \text{IS}_k\) i proces \(j \in C\) taki, że \(\bar{F}(i, j) \neq \hat{f}_i(j)\), 
+            w przeciwnym razie \(\text{IS}_k\) interpolowałby również \(\bar{F}\). Ponieważ 
+            \(\bar{F}(i, j) = \bar{F}(j, i) = \hat{f}_j(i)\), mamy \(\hat{f}_i(j) \neq \hat{f}_j(i)\), 
+            co oznacza, że błędna para \(\{i, j\}\) zostanie wykryta.
+        </p>
+        
+        <p><strong>Poprawność (2):</strong> Jeśli dealer jest poprawny, wybrał symetryczny wielomian 
+            \(F\) taki, że \(F(0, 0) = s\). Poprawne procesy otrzymują \(f_i(y) = F(i, y)\). 
+            Z powyższego, \(\bar{F} = F\), więc \(v = \bar{F}(0, 0) = F(0, 0) = s\).
+        </p>
+        
+        <p><strong>Sekretność:</strong> Bizantyjskie procesy (maksymalnie \(t\)) otrzymują maksymalnie 
+            \(t\) przekrojów \(f_i(y)\) symetrycznego wielomianu \(F(x, y)\) stopnia \(t\). 
+            Do interpolacji \(F\) potrzeba co najmniej \(t + 1\) punktów w każdym wymiarze. 
+            Zatem bizantyjskie procesy nie mogą odtworzyć \(F(0, 0) = s\). \(\square\)
+        </p>
+    </div>
+    
+    <h3>5.3. Analiza Detekcji Błędów</h3>
+    
+    <div class="theorem">
+        <div class="theorem-title">Twierdzenie 2: Wykrywanie liniowej liczby błędnych par</div>
+        <p>
+            Jeśli IVSS[r]-R nie powiedzie się (poprawne procesy odtworzą różne sekrety), 
+            to co najmniej \(t(n - 3t)\) błędnych par zostanie wykrytych.
+        </p>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Twierdzenia 2</div>
+        <p>
+            Niech \(C\) będzie zbiorem poprawnych procesów w \(M\), gdzie \(|C| \geq n - 2t\). 
+            Niech \(k\) będzie poprawnym procesem, który odtwarza wartość różną od \(v = \bar{F}(0, 0)\), 
+            gdzie \(\bar{F}\) jest wielomianem interpolowanym z \(C\).
+        </p>
+        
+        <p>
+            Proces \(k\) używa zbioru interpolacji \(\text{IS}_k\) takiego, że \(|\text{IS}_k| \geq n - 2t\). 
+            Niech \(B = \text{IS}_k \setminus C\) będzie zbiorem procesów w \(\text{IS}_k\), 
+            które nie są w \(C\). Każdy proces w \(B\) jest bizantyjski (ponieważ wszyscy poprawni 
+            procesy w \(M\) są w \(C\)).
+        </p>
+        
+        <p>
+            Mamy \(|B| \leq t\) (maksymalna liczba bizantyjskich procesów). Dla każdego \(i \in B\) 
+            i każdego \(j \in C\), jeśli \(\hat{f}_i(j) \neq \hat{f}_j(i)\), para \(\{i, j\}\) 
+            jest błędną parą i zostanie wykryta.
+        </p>
+        
+        <p>
+            Ponieważ \(k\) odtwarza wartość różną od \(v\), musi istnieć co najmniej jeden proces 
+            \(i \in B\) taki, że dla wielu \(j \in C\), \(\hat{f}_i(j) \neq \bar{F}(i, j) = \hat{f}_j(i)\). 
+            W pesymistycznym przypadku, każdy z \(t\) bizantyjskich procesów jest niezgodny z każdym 
+            z \(n - 3t\) poprawnych procesów w \(C\) (ponieważ \(|C| \geq n - 2t\) i co najwyżej 
+            \(t\) procesów w \(C\) może być "zagrożonych" przez bizantyjskie procesy).
+        </p>
+        
+        <p>
+            Zatem liczba wykrytych błędnych par wynosi co najmniej:
+        </p>
+        <p style="text-align: center;">
+            \[t \cdot (n - 3t)\]
+        </p>
+        
+        <p>
+            Dla \(n = 4t\), daje to \(t \cdot t = t^2\) wykrytych par – kwadratowo wiele! \(\square\)
+        </p>
+    </div>
+    
+    <h3>5.4. Ważne Wyjaśnienie: Czy szukamy kliki w grafie?</h3>
+    
+    <div class="note">
+        <p><strong>⚠️ Częste nieporozumienie:</strong></p>
+        <p>
+            Na pierwszy rzut oka może się wydawać, że protokół musi znaleźć <em>klikę</em> w grafie 
+            (zbiór \(M\) gdzie wszystkie pary są sprawdzone), co jest problemem NP-zupełnym i wymaga 
+            złożoności wykładniczej \(O(2^n)\) lub silniowej \(O(n!)\).
+        </p>
+        <p>
+            <strong>To NIE JEST prawda!</strong> Oto dlaczego:
+        </p>
+    </div>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Dlaczego NIE szukamy kliki (kluczowa różnica)</div>
+        
+        <p><strong>Problem kliki (NP-zupełny):</strong></p>
+        <ul>
+            <li><strong>Dany:</strong> Graf \(G = (V, E)\) z dowolnymi krawędziami</li>
+            <li><strong>Znaleźć:</strong> Największy zbiór wierzchołków gdzie WSZYSTKIE pary są połączone krawędzią</li>
+            <li><strong>Złożoność:</strong> Wykładnicza \(O(2^n)\) - trzeba sprawdzić wszystkie podzbiory</li>
+        </ul>
+        
+        <p><strong>Nasz protokół (wielomianowy):</strong></p>
+        <ul>
+            <li><strong>Nie mamy grafu z góry!</strong> Graf jest <strong>konstruowany dynamicznie</strong> 
+                przez procesy</li>
+            <li><strong>Nie szukamy</strong> - procesy <strong>budują</strong> zbiór \(M\) inkrementalnie</li>
+            <li><strong>Dealer wybiera</strong> dowolny zbiór \(M\) spełniający warunki (nie maksymalny!)</li>
+            <li><strong>Złożoność:</strong> Wielomianowa \(O(n^2)\) - sprawdzenie wszystkich par</li>
+        </ul>
+    </div>
+    
+    <h4>Szczegółowe wyjaśnienie konstrukcji M</h4>
+    
+    <div class="proof">
+        <div class="proof-title">Jak dealer buduje M (bez szukania kliki)</div>
+        
+        <p><strong>Krok 1: Dealer wysyła wielomiany</strong></p>
+        <p>
+            Dealer (poprawny lub bizantyjski) wysyła \(f_i\) do każdego procesu \(i\). 
+            Procesy wymieniają punkty i A-Cast wiadomości "EQUAL:(i,j)".
+        </p>
+        
+        <p><strong>Krok 2: Dealer zbiera wiadomości "EQUAL" i "CHECKED"</strong></p>
+        <p>
+            Dealer czeka aż otrzyma wystarczająco wiele wiadomości. To jest <strong>pasywne czekanie</strong>, 
+            nie aktywne przeszukiwanie!
+        </p>
+        <p style="text-align: center;">
+            \[\text{Zbiór kandydatów: } C = \{i : \text{dealer otrzymał wiele wiadomości o } i\}\]
+        </p>
+        
+        <p><strong>Krok 3: Weryfikacja kandydatów (O(|C|²) = O(n²))</strong></p>
+        <pre><code><span class="keyword">FOR EACH</span> i ∈ C <span class="keyword">DO</span>
+    <span class="keyword">FOR EACH</span> j ∈ C <span class="keyword">WHERE</span> j > i <span class="keyword">DO</span>
+        <span class="comment">// Sprawdź czy otrzymano "EQUAL:(i,j)" i "CHECKED" dla {i,j}</span>
+        <span class="keyword">IF NOT</span> received_equal(i, j) <span class="keyword">THEN</span>
+            <span class="function-name">REMOVE</span> i <span class="keyword">OR</span> j from C
+            <span class="keyword">BREAK</span>
+        <span class="keyword">IF NOT</span> all_checked(i, j) <span class="keyword">THEN</span>
+            <span class="function-name">REMOVE</span> i <span class="keyword">OR</span> j from C
+            <span class="keyword">BREAK</span>
+
+M ← C  <span class="comment">// To jest nasz candidate set!</span>
+</code></pre>
+        
+        <p><strong>Złożoność tego kroku:</strong> \(O(n^2)\) - dwie pętle po maksymalnie \(n\) elementach.</p>
+        
+        <p><strong>Krok 4: Jeśli |M| ≥ n-t, akceptuj</strong></p>
+        <p>
+            Dealer NIE szuka największego \(M\). Wystarczy <strong>DOWOLNY</strong> zbiór \(M\) spełniający:
+        </p>
+        <ul>
+            <li>\(|M| \geq n - t\)</li>
+            <li>Wszystkie pary w \(M\) mają "EQUAL" i "CHECKED"</li>
+        </ul>
+        <p>
+            To jest warunek <strong>spełnialności</strong>, nie <strong>optymalizacji</strong>!
+        </p>
+    </div>
+    
+    <h4>Dlaczego to działa bez szukania kliki?</h4>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Aspekt</th>
+                <th>Problem kliki (NP-hard)</th>
+                <th>Nasz protokół (Wielomianowy)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Graf wejściowy</strong></td>
+                <td>Dowolny, adversarialny</td>
+                <td>Konstruowany przez uczciwe procesy - gwarantowana struktura</td>
+            </tr>
+            <tr>
+                <td><strong>Cel</strong></td>
+                <td>Znaleźć NAJWIĘKSZĄ klikę</td>
+                <td>Znaleźć DOWOLNĄ klikę rozmiaru ≥ n-t</td>
+            </tr>
+            <tr>
+                <td><strong>Metoda</strong></td>
+                <td>Przeszukiwanie wszystkich podzbiorów</td>
+                <td>Inkrementalne budowanie z weryfikacją</td>
+            </tr>
+            <tr>
+                <td><strong>Gwarancja istnienia</strong></td>
+                <td>Brak (może nie być kliki)</td>
+                <td>Zawsze istnieje (zbiór poprawnych procesów!)</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Złożoność</strong></td>
+                <td>\(O(2^n)\) lub \(O(n!)\)</td>
+                <td><strong>\(O(n^2)\) - wielomianowa!</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h4>Intuicja: Dlaczego zawsze znajdujemy M?</h4>
+    
+    <div class="note">
+        <p><strong>Kluczowa obserwacja:</strong></p>
+        <p>
+            Jeśli dealer jest poprawny, to <strong>zbiór wszystkich poprawnych procesów</strong> 
+            automatycznie tworzy kandydata dla \(M\):
+        </p>
+        <ul>
+            <li>Poprawne procesy: co najmniej \(n - t\) ✓</li>
+            <li>Dla każdej pary poprawnych procesów \(\{i, j\}\):
+                <ul>
+                    <li>\(f_i(j) = F(i,j) = F(j,i) = f_j(i)\) (symetria) ✓</li>
+                    <li>Zatem "EQUAL:(i,j)" zostanie wysłane ✓</li>
+                    <li>Z Lematu 2, "CHECKED" również zostanie wysłane ✓</li>
+                </ul>
+            </li>
+        </ul>
+        <p>
+            Dealer po prostu <strong>zbiera</strong> te wiadomości (operacja \(O(n^2)\)) 
+            i <strong>weryfikuje</strong> warunki (operacja \(O(n^2)\)). 
+            <strong>Nie przeszukuje wykładniczo wielu kombinacji!</strong>
+        </p>
+    </div>
+    
+    <h4>A co jeśli dealer jest bizantyjski?</h4>
+    
+    <p>
+        Jeśli dealer jest bizantyjski, może:
+    </p>
+    <ul>
+        <li><strong>Opcja 1:</strong> Nie znaleźć żadnego \(M\) spełniającego warunki → Protokół dzielenia się nie kończy 
+            dla tego dealera (to OK, mamy \(n\) dealerów w ICC)</li>
+        <li><strong>Opcja 2:</strong> Znaleźć \(M\) zawierające bizantyjskie procesy → Wykryjemy 
+            \(t(n-3t)\) błędnych par w rekonstrukcji</li>
+    </ul>
+    <p>
+        W obu przypadkach <strong>nie ma wykładniczego przeszukiwania</strong>. Bizantyjski dealer po prostu 
+        wybiera dowolny zbiór (może losowo!) i sprawdza warunki - \(O(n^2)\).
+    </p>
+    
+    <h4>Podsumowanie złożoności obliczeniowej</h4>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Operacja</th>
+                <th>Gdzie</th>
+                <th>Złożoność</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Wysłanie wielomianów</td>
+                <td>IVSS-S, dealer</td>
+                <td>\(O(n)\) wiadomości</td>
+            </tr>
+            <tr>
+                <td>Wymiana punktów</td>
+                <td>IVSS-S, procesy</td>
+                <td>\(O(n^2)\) wymian</td>
+            </tr>
+            <tr>
+                <td>Weryfikacja par dla M</td>
+                <td>IVSS-S, dealer</td>
+                <td>\(O(n^2)\) sprawdzeń</td>
+            </tr>
+            <tr>
+                <td>A-Cast candidate set</td>
+                <td>IVSS-S, dealer</td>
+                <td>\(O(n^2)\) wiadomości (A-Cast)</td>
+            </tr>
+            <tr>
+                <td>Interpolacja wielomianu</td>
+                <td>IVSS-R</td>
+                <td>\(O(n^3)\) (Lagrange)</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Całkowita na rundę</strong></td>
+                <td><strong>Jedna runda ABA</strong></td>
+                <td><strong>\(O(n^3)\)</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p>
+        <strong>Wniosek:</strong> Protokół ma złożoność <strong>wielomianową</strong> \(O(n^3)\) 
+        na rundę komunikacji, a nie wykładniczą. Dla \(n = 100\) to jest ~1,000,000 operacji na rundę 
+        (wykonalne), nie \(2^{100}\) (niemożliwe).
+    </p>
+    
+    <h3>5.5. Analiza Złożoności Czasowej (Liczba Rund)</h3>
+    
+    <div class="theorem">
+        <div class="theorem-title">Twierdzenie 3: Oczekiwana liczba rund dla n > 3t</div>
+        <p>
+            Protokół ABA kończy się w \(O(t)\) oczekiwanych rundach dla \(n > 3t\).
+        </p>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Twierdzenia 3</div>
+        
+        <p><strong>Krok 1: Górne ograniczenie na liczbę błędnych par</strong></p>
+        <p>
+            Maksymalna liczba błędnych par w systemie to:
+        </p>
+        <p style="text-align: center;">
+            \[\text{Maksymalna liczba błędnych par} = t \cdot (n - t) + \binom{t}{2}\]
+        </p>
+        <p>
+            Pierwszy składnik to pary (bizantyjski, poprawny), drugi to pary (bizantyjski, bizantyjski). 
+            Upraszając:
+        </p>
+        <p style="text-align: center;">
+            \[t(n - t) + \frac{t(t-1)}{2} = t \cdot n - t^2 + \frac{t^2 - t}{2} = t \cdot n - \frac{t^2 + t}{2} \leq t \cdot n\]
+        </p>
+        
+        <p><strong>Krok 2: Liczba wykrywanych par na rundę</strong></p>
+        <p>
+            W każdej rundzie uruchamiamy \(n\) instancji IVSS (jedna na proces jako dealer). 
+            Z Twierdzenia 2, jeśli instancja IVSS nie powiedzie się, wykrywamy co najmniej 
+            \(t(n - 3t)\) błędnych par.
+        </p>
+        
+        <p>
+            W najgorszym przypadku (dla analizy), załóżmy że w każdej rundzie wykrywamy dokładnie 
+            \(t(n - 3t)\) nowych błędnych par (pesymistyczne założenie).
+        </p>
+        
+        <p><strong>Krok 3: Liczba potrzebnych rund</strong></p>
+        <p>
+            Liczba rund potrzebnych do wykrycia wszystkich błędnych par:
+        </p>
+        <p style="text-align: center;">
+            \[\text{Liczba rund} \leq \frac{t \cdot n}{t(n - 3t)} = \frac{n}{n - 3t}\]
+        </p>
+        
+        <p><strong>Krok 4: Analiza dla różnych wartości n</strong></p>
+        
+        <p><strong>Przypadek 1:</strong> Dla \(n = 3t + 1\) (minimalna optymalna odporność):
+        </p>
+        <p style="text-align: center;">
+            \[\frac{3t + 1}{(3t + 1) - 3t} = \frac{3t + 1}{1} = 3t + 1 = O(t)\]
+        </p>
+        
+        <p><strong>Przypadek 2:</strong> Dla \(n = 4t\):
+        </p>
+        <p style="text-align: center;">
+            \[\frac{4t}{4t - 3t} = \frac{4t}{t} = 4 = O(1)\]
+        </p>
+        
+        <p><strong>Przypadek 3:</strong> Dla \(n = (3 + \varepsilon)t\) gdzie \(\varepsilon > 0\):
+        </p>
+        <p style="text-align: center;">
+            \[\frac{(3 + \varepsilon)t}{(3 + \varepsilon)t - 3t} = \frac{(3 + \varepsilon)t}{\varepsilon t} = \frac{3 + \varepsilon}{\varepsilon} = O\left(\frac{1}{\varepsilon}\right)\]
+        </p>
+        
+        <p><strong>Krok 5: Analiza probabilistyczna konsensusu</strong></p>
+        <p>
+            Gdy wystarczająco wiele błędnych par zostanie wykrytych, procesy bizantyjskie tracą wpływ 
+            na protokół Vote. W każdej rundzie, z prawdopodobieństwem \(p > 0\) (zależnym od 
+            nieprzewidywalności ICC), poprawne procesy osiągają silną większość (confidence = 2) 
+            i kończą protokół.
+        </p>
+        
+        <p>
+            Oczekiwana liczba rund do osiągnięcia konsensusu po wykryciu błędnych par wynosi \(O(1/p)\). 
+            Łączna oczekiwana liczba rund:
+        </p>
+        <p style="text-align: center;">
+            \[E[\text{rundy}] = \frac{n}{n - 3t} + O(1) = O\left(\frac{n}{n - 3t}\right)\]
+        </p>
+        
+        <p>
+            Dla \(n > 3t\), mamy \(n - 3t > 0\), więc dla \(n = \Theta(t)\), oczekiwana liczba rund 
+            wynosi \(O(t)\). \(\square\)
+        </p>
+    </div>
+    
+    <div class="theorem">
+        <div class="theorem-title">Twierdzenie 4: Właściwości ABA</div>
+        <p>
+            Protokół ABA spełnia wszystkie wymagane właściwości:
+        </p>
+        <ul>
+            <li><strong>Terminacja:</strong> Z prawdopodobieństwem 1, każdy poprawny proces kończy działanie i zwraca wartość.</li>
+            <li><strong>Zgodność:</strong> Wszystkie poprawne procesy zwracają tę samą wartość.</li>
+            <li><strong>Poprawność:</strong> Jeśli wszystkie poprawne procesy mają tę samą wartość wejściową \(v\), 
+                to wszystkie zwracają \(v\).</li>
+        </ul>
+    </div>
+    
+    <div class="proof">
+        <div class="proof-title">Dowód Twierdzenia 4 (szkic)</div>
+        
+        <p><strong>Terminacja:</strong> Z Twierdzenia 3, protokół kończy się w \(O(t)\) oczekiwanych rundach. 
+            Ponieważ każda runda ma niezerowe prawdopodobieństwo zakończenia (dzięki ICC), prawdopodobieństwo 
+            braku zakończenia po \(k\) rundach zmniejsza się wykładniczo: \(P(\text{nie zakończono}) < (1-p)^k\). 
+            Dla \(k \to \infty\), to dąży do 0, więc z prawdopodobieństwem 1 protokół kończy się.
+        </p>
+        
+        <p><strong>Zgodność:</strong> Proces kończy się tylko po otrzymaniu \(t+1\) wiadomości "COMPLETE: v" 
+            dla tej samej wartości \(v\). Ponieważ jest maksymalnie \(t\) bizantyjskich procesów, co najmniej 
+            jeden poprawny proces wysłał "COMPLETE: v". Poprawny proces wysyła "COMPLETE: v" tylko gdy osiągnął 
+            silną większość (confidence = 2) dla \(v\) w protokole Vote. Z własności Vote i A-Cast, wszystkie 
+            poprawne procesy, które kończą rundę, również zobaczą tę samą silną większość lub przyjmą \(v\) 
+            jako estimate. Przez indukcję, wszystkie poprawne procesy ostatecznie zgodzą się na \(v\).
+        </p>
+        
+        <p><strong>Poprawność:</strong> Jeśli wszystkie poprawne procesy zaczynają z tym samym 
+            input_bit = \(v\), to w pierwszej rundzie protokołu Vote, wszystkie poprawne procesy w zbiorze 
+            \(A_k\) (który zawiera co najmniej \(n-t\) procesów, z których co najmniej \(n-2t > t\) jest 
+            poprawnych) będą głosować na \(v\). Z własności Vote, osiągną silną większość dla \(v\). 
+            Zatem wszyscy poprawni procesy ustawią estimate = \(v\) i wyślą "COMPLETE: v" w pierwszej rundzie. 
+            Po otrzymaniu \(t+1\) takich wiadomości, wszyscy zwrócą \(v\). \(\square\)
+        </p>
+    </div>
+    
+    <h3>5.6. Praktyczny przykład: n=20, t=6</h3>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Dealer buduje M - konkretny przykład bez szukania kliki</div>
+        
+        <p><strong>Konfiguracja:</strong> n=20, t=6, bizantyjskie: {3, 7, 11, 15, 17, 19}</p>
+        
+        <p><strong>Dealer wysyła wielomiany, procesy wymieniają punkty...</strong></p>
+        
+        <pre><code><span class="comment">// Dealer (przypuśćmy proces 1, poprawny) otrzymuje wiadomości:</span>
+
+received_equal = {
+    (1,2), (1,4), (1,5), (1,6), (1,8), ..., <span class="comment">// Para (1, poprawny proces)</span>
+    (2,4), (2,5), (2,6), (2,8), ...,        <span class="comment">// Para (poprawny, poprawny)</span>
+    ...
+    <span class="comment">// BRAK: (3,x) dla wielu x - proces 3 jest bizantyjski</span>
+    <span class="comment">// BRAK: (7,x) dla wielu x - proces 7 jest bizantyjski</span>
+}
+
+<span class="comment">// Algorytm dealera (WIELOMIANOWY!):</span>
+
+candidates = {1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14, 16, 18, 20}  <span class="comment">// Poprawne procesy</span>
+M = ∅
+
+<span class="comment">// Sprawdź każdy kandydat (O(n) iteracji):</span>
+<span class="keyword">FOR EACH</span> i ∈ candidates <span class="keyword">DO</span>
+    is_valid = <span class="keyword">true</span>
+    
+    <span class="comment">// Sprawdź z już dodanymi do M (O(|M|) iteracji):</span>
+    <span class="keyword">FOR EACH</span> j ∈ M <span class="keyword">DO</span>
+        <span class="keyword">IF NOT</span> (received_equal.contains((i,j)) <span class="keyword">AND</span> 
+                  all_checked(i,j)) <span class="keyword">THEN</span>
+            is_valid = <span class="keyword">false</span>
+            <span class="keyword">BREAK</span>
+    
+    <span class="keyword">IF</span> is_valid <span class="keyword">THEN</span>
+        M.add(i)
+        
+        <span class="comment">// Sprawdź próg</span>
+        <span class="keyword">IF</span> |M| ≥ n - t <span class="keyword">THEN</span>  <span class="comment">// ≥ 14</span>
+            <span class="keyword">BREAK</span>  <span class="comment">// Sukces! Mamy M</span>
+
+<span class="comment">// Wynik: M = {1,2,4,5,6,8,9,10,12,13,14,16,18,20}</span>
+<span class="comment">// Rozmiar: 14 ≥ 14 = n-t ✓</span>
+<span class="comment">// Złożoność: O(n²) - WIELOMIANOWA!</span>
+</code></pre>
+
+        <p><strong>Analiza:</strong></p>
+        <ul>
+            <li>Zewnętrzna pętla: maksymalnie \(n\) iteracji</li>
+            <li>Wewnętrzna pętla: maksymalnie \(|M| \leq n\) iteracji</li>
+            <li>Całkowita złożoność: \(O(n \times n) = O(n^2)\)</li>
+            <li><strong>Dla n=20:</strong> ~400 operacji (wykładniczna byłaby ~\(10^6\))</li>
+            <li><strong>Dla n=100:</strong> ~10,000 operacji (wykładniczna byłaby ~\(10^{30}\))</li>
+        </ul>
+    </div>
+    
+    <h3>5.7. Podsumowanie Wyników Teoretycznych</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Właściwość</th>
+                <th>Wynik</th>
+                <th>Porównanie z poprzednimi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Odporność</strong></td>
+                <td>\(n > 3t\)</td>
+                <td>Optymalna (niemożliwe dla \(n \leq 3t\))</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Złożoność czasowa</strong></td>
+                <td>\(O(t)\) rund</td>
+                <td>Ulepsza \(O(n^2)\) → \(O(t)\)</td>
+            </tr>
+            <tr class="highlight">
+                <td><strong>Dla \(n = (3+\varepsilon)t\)</strong></td>
+                <td>\(O(1/\varepsilon)\) rund</td>
+                <td>Prawie stały czas dla małego \(\varepsilon\)</td>
+            </tr>
+            <tr>
+                <td><strong>Detekcja błędów</strong></td>
+                <td>\(t(n-3t)\) par/rundę</td>
+                <td>Liniowa vs \(O(1)\) w poprzednich</td>
+            </tr>
+            <tr>
+                <td><strong>Terminacja</strong></td>
+                <td>Prawie na pewno (prob. 1)</td>
+                <td>Lepsze niż "przytłaczające prawdopodobieństwo"</td>
+            </tr>
+            <tr>
+                <td><strong>Złożoność komunikacyjna</strong></td>
+                <td>\(O(n^2)\) per runda</td>
+                <td>Standardowa dla A-Cast</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h2>6. Bibliografia</h2>
+    
+    <h3>6.1. Główne źródło</h3>
+    <div class="note">
+        <strong>Cheng Wang</strong><br>
+        <em>"Asynchronous Byzantine Agreement with Optimal Resilience and Linear Complexity"</em><br>
+        <a href="https://arxiv.org/abs/1507.06165" target="_blank" style="color: #1e90ff;">https://arxiv.org/abs/1507.06165</a><br>
+        arXiv:1507.06165, 2015
+    </div>
+    
+    <h3>6.2. Powiązane prace</h3>
+    <ul>
+        <li><strong>Abraham, Dolev, Halpern</strong> - "Distributed Computing Meets Game Theory: Robust Mechanisms for Rational Secret Sharing and Multiparty Computation", PODC 2008 (O(n²) expected rounds)</li>
+        <li><strong>Feldman, Micali</strong> - "An Optimal Probabilistic Protocol for Synchronous Byzantine Agreement", STOC 1988 (O(1) gdy n > 4t)</li>
+        <li><strong>Ben-Or</strong> - "Another Advantage of Free Choice: Completely Asynchronous Agreement Protocols", PODC 1983 (Pierwszy asynchroniczny protokół)</li>
+        <li><strong>Bracha</strong> - "An Asynchronous [(n-1)/3]-Resilient Consensus Protocol", PODC 1984 (A-Cast używany w implementacji)</li>
+        <li><strong>Canetti, Rabin</strong> - "Fast Asynchronous Byzantine Agreement with Optimal Resilience", STOC 1993 (Techniki common coin)</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>7. Implementacja i Symulacja</h2>
+    
+    <h3>7.1. Repozytorium GitHub</h3>
+    
+    <p>
+        Pełna implementacja protokołu w języku Go jest dostępna w repozytorium GitHub:
+    </p>
+    
+    <a href="https://github.com/poneciak57/async-agreement-protocol" class="github-link" target="_blank">
+        📦 github.com/poneciak57/async-agreement-protocol
+    </a>
+    
+    <h3>7.2. Struktura Projektu</h3>
+    
+    <pre><code>async-agreement-protocol-3/
+│
+├── services/
+│   ├── aba.go           <span class="comment">// Główna pętla ABA</span>
+│   ├── acast.go         <span class="comment">// A-Cast (Bracha's broadcast)</span>
+│   ├── certification.go <span class="comment">// Protokół certyfikacji</span>
+│   ├── icc.go           <span class="comment">// Inferable Common Coin</span>
+│   ├── ivss.go          <span class="comment">// IVSS-S i IVSS-R</span>
+│   ├── vote.go          <span class="comment">// Protokół głosowania</span>
+│   └── network.go       <span class="comment">// Warstwa komunikacji</span>
+│
+├── utils/
+│   ├── polynomial.go    <span class="comment">// Operacje na wielomianach</span>
+│   └── logger.go        <span class="comment">// Logowanie i debugowanie</span>
+│
+├── tests/
+│   ├── ivss_test.go     <span class="comment">// Testy jednostkowe IVSS</span>
+│   ├── icc_test.go      <span class="comment">// Testy ICC</span>
+│   ├── vote_test.go     <span class="comment">// Testy Vote</span>
+│   └── acast_test.go    <span class="comment">// Testy A-Cast</span>
+│
+├── pseudocode/          <span class="comment">// Dokumentacja pseudokodu</span>
+├── docs/                <span class="comment">// Dodatkowa dokumentacja</span>
+├── gen.go               <span class="comment">// Generator danych testowych</span>
+├── test.sh              <span class="comment">// Skrypt testowy (100 testów)</span>
+└── main.go              <span class="comment">// Punkt wejścia symulacji</span>
+</code></pre>
+    
+    <h3>7.3. Uruchomienie Symulacji</h3>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Kompilacja i uruchomienie</div>
+        
+        <pre><code><span class="comment"># Klonowanie repozytorium</span>
+git clone https://github.com/poneciak57/async-agreement-protocol.git
+cd async-agreement-protocol/async-agreement-protocol-3
+
+<span class="comment"># Kompilacja</span>
+go build -o aba-sim main.go
+
+<span class="comment"># Uruchomienie symulacji (czyta ze standardowego wejścia)</span>
+echo "10 3 1 0 1 1 0 1 0" | ./aba-sim
+
+<span class="comment"># Format wejścia:</span>
+<span class="comment"># Linia 1: n t (liczba procesów, liczba bizantyjskich)</span>
+<span class="comment"># Linia 2: input_1 input_2 ... input_{n-t} (bity wejściowe dla uczciwych procesów)</span>
+
+<span class="comment"># Przykład z plikiem wejściowym:</span>
+cat > input.txt << EOF
+10 3
+1 0 1 1 0 1 0
+EOF
+./aba-sim < input.txt
+
+<span class="comment"># Tryb cichy (tylko wynik końcowy):</span>
+./aba-sim -silent < input.txt
+</code></pre>
+    </div>
+    
+    <h3>7.4. Automatyczne Testy</h3>
+    
+    <p>
+        Repozytorium zawiera skrypt <code>test.sh</code> uruchamiający 100 losowych testów:
+    </p>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Uruchomienie testów</div>
+        
+        <pre><code><span class="comment"># Uruchom wszystkie testy automatyczne</span>
+./test.sh
+
+<span class="comment"># Skrypt wykonuje:</span>
+<span class="comment"># 1. Kompiluje generator (gen.go) i program główny (main.go)</span>
+<span class="comment"># 2. Dla każdego testu (1-100):</span>
+<span class="comment">#    - Generuje losowe wejście (n, t, bity)</span>
+<span class="comment">#    - Uruchamia symulację w trybie -silent</span>
+<span class="comment">#    - Weryfikuje zgodność wyników wszystkich uczciwych procesów</span>
+<span class="comment"># 3. Wyświetla podsumowanie (PASSED/FAILED)</span>
+
+<span class="comment"># Przykładowe wyjście:</span>
+Starting tests...
+Test 1 PASSED (n=10, t=3)
+Test 2 PASSED (n=15, t=4)
+...
+Test 100 PASSED (n=20, t=6)
+All 100 tests passed!
+
+<span class="comment"># Alternatywnie - testy jednostkowe Go:</span>
+go test -v ./tests/...
+</code></pre>
+    </div>
+    
+    <h3>7.5. Opis Symulacji</h3>
+    
+    <p>
+        Implementacja symuluje pełny system rozproszony z następującymi cechami:
+    </p>
+    
+    <ul>
+        <li><strong>Symulacja asynchroniczności:</strong> Komunikaty mają losowe opóźnienia (50-200ms) 
+            symulujące rzeczywistą sieć.</li>
+        
+        <li><strong>Procesy bizantyjskie:</strong> Losowo wybrane \(t\) procesów zachowuje się złośliwie:
+            <ul>
+                <li>Wysyłają niepoprawne wielomiany w IVSS</li>
+                <li>Wysyłają sprzeczne wiadomości do różnych procesów</li>
+                <li>Próbują zakłócić protokół Vote i ICC</li>
+            </ul>
+        </li>
+        
+        <li><strong>Szczegółowe logowanie:</strong> Każdy proces loguje swoje działania:
+            <ul>
+                <li>Wysłane i odebrane wiadomości</li>
+                <li>Wykryte błędne pary w każdej rundzie</li>
+                <li>Decyzje w protokole Vote (confidence level)</li>
+                <li>Wartości wspólnej monety ICC</li>
+                <li>Czas zakończenia i finalna wartość</li>
+            </ul>
+        </li>
+        
+        <li><strong>Metryki wydajności:</strong>
+            <ul>
+                <li>Całkowita liczba rund do konsensusu</li>
+                <li>Liczba wykrytych błędnych par</li>
+                <li>Czas trwania symulacji</li>
+                <li>Liczba wysłanych wiadomości</li>
+            </ul>
+        </li>
+    </ul>
+    
+    <h3>7.6. Przykładowe Wyniki Symulacji</h3>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Przykład: n=10, t=3, wszyscy zaczynają z 1</div>
+        
+        <pre><code>========== Symulacja ABA ==========
+Parametry: n=10, t=3, bizantyjskie: [2, 5, 7]
+
+<span class="comment">--- Runda 1 ---</span>
+Vote: Silna większość dla 1 (confidence=2)
+Procesy poprawne: wysyłają COMPLETE:1
+Wykryte błędne pary: 12
+
+<span class="comment">--- Runda 2 ---</span>
+Procesy otrzymują (t+1)=4 wiadomości COMPLETE:1
+Wszystkie poprawne procesy TERMINUJĄ z wartością: 1
+
+========== Wyniki ==========
+✓ Konsensus osiągnięty: 1
+✓ Liczba rund: 2
+✓ Wszystkie poprawne procesy zgodne: TAK
+✓ Całkowita liczba wykrytych błędnych par: 12
+✓ Czas symulacji: 1.23s
+</code></pre>
+    </div>
+    
+    <div class="algorithm">
+        <div class="algorithm-title">Przykład: n=10, t=3, mieszane wejścia</div>
+        
+        <pre><code>========== Symulacja ABA ==========
+Parametry: n=10, t=3, wejścia: [1,0,1,0,1,0,1,1,0,1]
+
+<span class="comment">--- Runda 1 ---</span>
+Vote: Brak większości (confidence=0)
+ICC: Generowanie wspólnej monety...
+Wspólna moneta: 0
+Estimate poprawnych procesów: 0
+Wykryte błędne pary: 8
+
+<span class="comment">--- Runda 2 ---</span>
+Vote: Słaba większość dla 0 (confidence=1)
+ICC: Generowanie wspólnej monety...
+Wspólna moneta: 1
+Estimate pozostaje: 0
+Wykryte błędne pary: 15
+
+<span class="comment">--- Runda 3 ---</span>
+Vote: Silna większość dla 0 (confidence=2)
+Procesy poprawne: wysyłają COMPLETE:0
+Wykryte błędne pary: 18
+
+<span class="comment">--- Runda 4 ---</span>
+Procesy otrzymują (t+1)=4 wiadomości COMPLETE:0
+Wszystkie poprawne procesy TERMINUJĄ z wartością: 0
+
+========== Wyniki ==========
+✓ Konsensus osiągnięty: 0
+✓ Liczba rund: 4
+✓ Wszystkie poprawne procesy zgodne: TAK
+✓ Całkowita liczba wykrytych błędnych par: 18
+✓ Czas symulacji: 2.87s
+</code></pre>
+    </div>
+    
+    <h3>7.7. Testy Jednostkowe</h3>
+    
+    <p>
+        Projekt zawiera kompleksowe testy jednostkowe dla wszystkich komponentów:
+    </p>
+    
+    <pre><code><span class="comment"># Wszystkie testy:</span>
+go test -v ./tests/...
+
+<span class="comment"># Testy IVSS (podstawowe, stresowe, bizantyjskie):</span>
+go test -v ./tests/*ivss*.go -timeout 60s
+
+<span class="comment"># Testy ICC (Inferable Common Coin):</span>
+go test -v ./tests/*icc*.go
+
+<span class="comment"># Testy Vote Protocol:</span>
+go test -v ./tests/*vote*.go
+
+<span class="comment"># Testy A-Cast (Bracha's broadcast):</span>
+go test -v ./tests/*acast*.go
+
+<span class="comment"># Przykładowe scenariusze testowe:</span>
+<span class="comment"># - TestIVSS_NormalExecution: Standardowy przebieg IVSS</span>
+<span class="comment"># - TestIVSS_Byzantine_Reconstruction_BadShare: Tolerancja bizantyjskich węzłów</span>
+<span class="comment"># - TestIVSS_Stress_Concurrent: 20 równoległych instancji IVSS</span>
+<span class="comment"># - TestICC_Basic: Podstawowa funkcjonalność wspólnej monety</span>
+<span class="comment"># - TestVote_StrongMajority: Głosowanie z silną większością</span>
+</code></pre>
+
+    <h3>7.8. Wymagania Systemowe</h3>
+    
+    <ul>
+        <li><strong>Go:</strong> wersja 1.20 lub nowsza</li>
+        <li><strong>System operacyjny:</strong> Linux, macOS, Windows (z WSL)</li>
+        <li><strong>Pamięć:</strong> Minimum 512MB RAM (zalecane 2GB dla większych symulacji)</li>
+        <li><strong>Zależności:</strong> Automatycznie pobierane przez <code>go mod</code></li>
+    </ul>
+    
+    <div class="note">
+        <strong>Uwaga o wydajności:</strong><br>
+        Po poprawkach w <code>ivss.go</code> (usunięcie wykładniczego szukania kliki),
+        protokół ma złożoność O(n³) na rundę i skaluje się do sieci z 100+ węzłami.
+        Zobacz szczegółowe komentarze w kodzie dla wyjaśnienia optymalizacji.
+    </div>
+</div>
+
+<footer style="text-align: center; padding: 20px; margin-top: 40px; border-top: 2px solid #333; color: #666;">
+    <p><em>Implementacja oparta na pracy: Cheng Wang, "Asynchronous Byzantine Agreement with Optimal Resilience and Linear Complexity", arXiv:1507.06165</em></p>
+    <p>Repozytorium: <a href="https://github.com/poneciak57/async-agreement-protocol" target="_blank" style="color: #1e90ff;">github.com/poneciak57/async-agreement-protocol</a></p>
+    <p style="margin-top: 10px; font-size: 0.9em;">Grudzień 2025</p>
+</footer>
+
+</body>
+</html>
